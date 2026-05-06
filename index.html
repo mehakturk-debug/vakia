@@ -134,7 +134,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .cal-dr{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;padding:.22rem 0;border-bottom:1px solid rgba(32,201,151,.15)}
 .cal-dr:last-child{border-bottom:none}
 .cal-dr strong{color:var(--g2)}
-.cal-dr-del{background:none;border:none;color:var(--danger);font-size:.7rem;cursor:pointer;padding:.1rem .3rem;border-radius:4px;font-family:'Plus Jakarta Sans',sans-serif}
+.cal-dr-del{background:none;border:none;color:var(--danger);font-size:1.1rem;cursor:pointer;padding:.1rem .3rem;border-radius:4px;font-family:'Plus Jakarta Sans',sans-serif}
 
 /* USUL */
 .usul-intro{background:linear-gradient(135deg,#f0faf5,#e6f4ee);border-radius:12px;padding:.9rem;margin-bottom:.75rem;border-left:4px solid var(--g2)}
@@ -387,7 +387,28 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- 1. Firebase SDK Kütüphaneleri -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
 <script>
+// --- FIREBASE CONFIG ---
+const firebaseConfig = {
+  apiKey: "AIzaSyAFFM31mFmT3Pv9XmVzR9V_rWdKXARBM7Q",
+  authDomain: "vakia-8908e.firebaseapp.com",
+  databaseURL: "https://vakia-8908e-default-rtdb.firebaseio.com",
+  projectId: "vakia-8908e",
+  storageBucket: "vakia-8908e.firebasestorage.app",
+  messagingSenderId: "45072297876",
+  appId: "1:45072297876:web:4eca1441d489c34cdb6981"
+};
+
+// Firebase Başlat
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
+
 // ── STATE ──
 const S = {
   user: null,
@@ -401,86 +422,46 @@ const S = {
   pendingConfirm: null
 };
 
-// ── STORAGE HELPERS ──
-const SHARED_KEY = 'vakiaHatimData_v3';
-
-async function storageGet(key, shared = false) {
-  try {
-    const r = await window.storage.get(key, shared);
-    return r ? JSON.parse(r.value) : null;
-  } catch { return null; }
-}
-async function storageSet(key, val, shared = false) {
-  try {
-    await window.storage.set(key, JSON.stringify(val), shared);
-    return true;
-  } catch { return false; }
-}
-async function storageDelete(key, shared = false) {
-  try { await window.storage.delete(key, shared); } catch {}
-}
-
-// ── SYNC DOT ──
-function syncDot(state) {
-  const d = document.getElementById('syncDot');
-  d.className = 'sync-dot ' + state;
-}
-
-// ── TOAST ──
-let toastT;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// ── LOADING ──
-function showLoading(msg = 'Veriler yükleniyor...') {
-  document.getElementById('loadingMsg').textContent = msg;
-  document.getElementById('loadingOverlay').style.display = 'flex';
-}
-function hideLoading() {
-  document.getElementById('loadingOverlay').style.display = 'none';
-}
-
-// ── SHARED DATA LOAD/SAVE ──
+// ── STORAGE HELPERS (Firebase Bridge) ──
 async function loadSharedData() {
   syncDot('sync');
-  const data = await storageGet(SHARED_KEY, true);
-  if (data) {
-    S.readers = data.readers || [];
-    S.entries = data.entries || {};
-  } else {
-    S.readers = [];
-    S.entries = {};
-  }
-  syncDot('ok');
+  // Realtime dinleme kuruyoruz
+  db.ref('shared_hatim').on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      S.readers = data.readers || [];
+      S.entries = data.entries || {};
+    } else {
+      S.readers = [];
+      S.entries = {};
+    }
+    renderAll();
+    renderCalendar();
+    syncDot('ok');
+    hideLoading();
+  }, (error) => {
+    console.error("Firebase Hatası:", error);
+    syncDot('err');
+  });
 }
 
 async function saveSharedData() {
   syncDot('sync');
-  const ok = await storageSet(SHARED_KEY, { readers: S.readers, entries: S.entries }, true);
-  syncDot(ok ? 'ok' : 'err');
-  if (!ok) showToast('⚠️ Kayıt başarısız, internet bağlantısını kontrol edin');
-}
-
-// ── USERS (shared) ──
-const USERS_KEY = 'vakiaHatimUsers_v2';
-async function getUsers() {
-  const u = await storageGet(USERS_KEY, true);
-  return u || {};
-}
-async function saveUsers(users) {
-  await storageSet(USERS_KEY, users, true);
+  try {
+    await db.ref('shared_hatim').set({
+      readers: S.readers,
+      entries: S.entries
+    });
+    syncDot('ok');
+  } catch (err) {
+    console.error("Kaydetme Hatası:", err);
+    syncDot('err');
+    showToast('⚠️ Kayıt başarısız, yetkilerinizi kontrol edin');
+  }
 }
 
 // ── SESSION (local) ──
 const ssKey = 'vakiaHatimSession';
-function getSession() {
-  try { return JSON.parse(sessionStorage.getItem(ssKey)); } catch { return null; }
-}
 function setSession(user) {
   sessionStorage.setItem(ssKey, JSON.stringify(user));
 }
@@ -497,77 +478,122 @@ function switchAuthTab(t) {
 
 function setBtnLoading(id, loading, label = '') {
   const b = document.getElementById(id);
+  if(!b) return;
   b.disabled = loading;
   b.innerHTML = loading ? `<span class="spinner"></span> Lütfen bekleyin...` : label;
 }
 
+// ── LOGIN ──
 async function doLogin() {
   const u = document.getElementById('lUser').value.trim();
   const p = document.getElementById('lPass').value;
   const err = document.getElementById('lErr');
   if (!u || !p) { err.textContent = 'Lütfen tüm alanları doldurun.'; return; }
+  
   setBtnLoading('btnLogin', true);
   err.textContent = '';
-  const users = await getUsers();
-  setBtnLoading('btnLogin', false, 'Giriş Yap →');
-  if (!users[u]) { err.textContent = 'Kullanıcı bulunamadı.'; return; }
-  if (users[u].pass !== p) { err.textContent = 'Şifre hatalı.'; return; }
-  S.user = { username: u, fullname: users[u].name };
-  setSession(S.user);
-  showApp();
+  
+  try {
+    const email = u + "@vakia.com"; // Kullanıcı adını email formatına çeviriyoruz
+    await auth.signInWithEmailAndPassword(email, p);
+    // onAuthStateChanged tetikleneceği için burada yönlendirme yapmıyoruz
+  } catch (e) {
+    setBtnLoading('btnLogin', false, 'Giriş Yap →');
+    err.textContent = 'Kullanıcı adı veya şifre hatalı.';
+  }
 }
 
+// ── REGISTER ──
 async function doRegister() {
   const name = document.getElementById('rName').value.trim();
   const u = document.getElementById('rUser').value.trim();
   const p = document.getElementById('rPass').value;
   const p2 = document.getElementById('rPass2').value;
   const err = document.getElementById('rErr'), ok = document.getElementById('rOk');
+  
   err.textContent = ''; ok.textContent = '';
   if (!name || !u || !p || !p2) { err.textContent = 'Tüm alanları doldurun.'; return; }
   if (u.length < 3) { err.textContent = 'Kullanıcı adı en az 3 karakter.'; return; }
   if (p.length < 4) { err.textContent = 'Şifre en az 4 karakter.'; return; }
   if (p !== p2) { err.textContent = 'Şifreler eşleşmiyor.'; return; }
+  
   setBtnLoading('btnRegister', true);
-  const users = await getUsers();
-  if (users[u]) { setBtnLoading('btnRegister', false, 'Kayıt Ol →'); err.textContent = 'Bu kullanıcı adı alınmış.'; return; }
-  users[u] = { name, pass: p };
-  await saveUsers(users);
-  setBtnLoading('btnRegister', false, 'Kayıt Ol →');
-  ok.textContent = '✓ Kayıt başarılı! Giriş yapabilirsiniz.';
-  setTimeout(() => { switchAuthTab('login'); document.getElementById('lUser').value = u; }, 1400);
+  
+  try {
+    const email = u + "@vakia.com";
+    const cred = await auth.createUserWithEmailAndPassword(email, p);
+    await cred.user.updateProfile({ displayName: name });
+    
+    setBtnLoading('btnRegister', false, 'Kayıt Ol →');
+    ok.textContent = '✓ Kayıt başarılı! Giriş yapılıyor...';
+    // Firebase otomatik giriş yapacaktır
+  } catch (e) {
+    setBtnLoading('btnRegister', false, 'Kayıt Ol →');
+    err.textContent = "Kayıt hatası: " + e.message;
+  }
 }
 
+// ── LOGOUT ──
 function doLogout() {
+  auth.signOut();
   clearSession();
   S.user = null;
   document.getElementById('authWrap').style.display = 'flex';
   document.getElementById('appWrap').style.display = 'none';
-  document.getElementById('lUser').value = '';
-  document.getElementById('lPass').value = '';
-  document.getElementById('lErr').textContent = '';
 }
 
+// ── APP START ──
 async function showApp() {
   document.getElementById('authWrap').style.display = 'none';
   document.getElementById('appWrap').style.display = 'block';
+  
   const ini = (S.user.fullname || S.user.username).substring(0, 2).toUpperCase();
   document.getElementById('topAv').textContent = ini;
   document.getElementById('topUser').textContent = S.user.fullname || S.user.username;
-  showLoading('Veriler yükleniyor...');
+  
+  showLoading('Veriler buluttan yükleniyor...');
   await loadSharedData();
-  hideLoading();
-  renderAll();
-  renderCalendar();
-  // Auto-refresh every 30s
-  clearInterval(window._autoRefresh);
-  window._autoRefresh = setInterval(autoRefresh, 30000);
 }
 
-async function autoRefresh() {
-  await loadSharedData();
-  renderAll();
-  renderCalendar();
+// --- OTURUM DİNLEME ---
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    S.user = { 
+      username: user.email.split('@')[0], 
+      fullname: user.displayName || user.email.split('@')[0] 
+    };
+    showApp();
+  } else {
+    document.getElementById('authWrap').style.display = 'flex';
+    document.getElementById('appWrap').style.display = 'none';
+  }
+});
+
+// ── SYNC DOT ──
+function syncDot(state) {
+  const d = document.getElementById('syncDot');
+  if(!d) return;
+  d.className = 'sync-dot ' + state;
+}
+
+// ── TOAST ──
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── LOADING ──
+function showLoading(msg = 'Veriler yükleniyor...') {
+  const msgEl = document.getElementById('loadingMsg');
+  if(msgEl) msgEl.textContent = msg;
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
 }
 
 // ── HELPERS ──
@@ -575,12 +601,16 @@ const todayKey = () => {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 };
+
 function getTotals() {
   const t = {};
   S.readers.forEach(r => { t[r] = 0; });
-  Object.values(S.entries).forEach(day => Object.entries(day).forEach(([r, c]) => { t[r] = (t[r] || 0) + c; }));
+  Object.values(S.entries).forEach(day => {
+    Object.entries(day).forEach(([r, c]) => { t[r] = (t[r] || 0) + c; });
+  });
   return t;
 }
+
 const grandTotal = () => Object.values(getTotals()).reduce((a, b) => a + b, 0);
 const todayTotal = () => Object.values(S.entries[todayKey()] || {}).reduce((a, b) => a + b, 0);
 
@@ -603,13 +633,16 @@ function renderLeaderboard() {
   const sorted = [...S.readers].sort((a, b) => (totals[b] || 0) - (totals[a] || 0));
   const max = sorted.length > 0 ? (totals[sorted[0]] || 1) : 1;
   const podEl = document.getElementById('lbPodium'), restEl = document.getElementById('lbRest');
+  
   if (!sorted.length) {
     podEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:.78rem;padding:.75rem;background:var(--card);border-radius:12px;box-shadow:var(--shadow)">Henüz okuyucu eklenmedi.</div>';
     restEl.innerHTML = ''; return;
   }
+  
   const medals = ['🥇', '🥈', '🥉'], rl = ['1. Sıra', '2. Sıra', '3. Sıra'], pc = ['p1', 'p2', 'p3'];
   const top3 = sorted.slice(0, Math.min(3, sorted.length));
   let slots = ['', '', ''];
+  
   top3.forEach((r, i) => {
     const cnt = totals[r] || 0, ini = r.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
     slots[i] = `<div class="podium-card ${pc[i]}" onclick="openModal('${esc(r)}')">
@@ -621,8 +654,10 @@ function renderLeaderboard() {
       <div class="podium-lbl">adet</div>
     </div>`;
   });
+  
   for (let i = top3.length; i < 3; i++)
     slots[i] = `<div class="podium-card ${pc[i]}" style="opacity:.3"><div class="podium-medal">${medals[i]}</div><div class="podium-name" style="font-size:.62rem;color:var(--muted)">—</div><div class="podium-count">0</div><div class="podium-lbl">adet</div></div>`;
+  
   podEl.innerHTML = slots[1] + slots[0] + slots[2];
   const rest = sorted.slice(3);
   restEl.innerHTML = rest.map((r, i) => {
@@ -639,8 +674,10 @@ function renderLeaderboard() {
 function renderReaderList() {
   const totals = getTotals(), el = document.getElementById('rdrList');
   if (!S.readers.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.78rem;text-align:center;padding:.5rem">Henüz kimse eklenmedi.</div>'; return; }
+  
   const me = (S.user.fullname || S.user.username).toLowerCase();
   const sorted = [...S.readers].sort((a, b) => (totals[b] || 0) - (totals[a] || 0));
+  
   el.innerHTML = sorted.map((r, i) => {
     const ini = r.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
     const isMine = r.toLowerCase() === me;
@@ -660,7 +697,6 @@ function renderReaderList() {
   }).join('');
 }
 
-// escape for html attr
 function esc(s) { return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
 
 // ── ADD READER ──
@@ -670,7 +706,7 @@ async function addReader() {
   if (S.readers.includes(n)) { showToast('Bu isim zaten var.'); return; }
   S.readers.push(n);
   inp.value = '';
-  renderAll();
+  // Cloud Save
   await saveSharedData();
 }
 
@@ -684,6 +720,7 @@ function openModal(name) {
   document.getElementById('overlay').classList.add('open');
   setTimeout(() => document.getElementById('cntInp').focus(), 200);
 }
+
 function closeModal() { document.getElementById('overlay').classList.remove('open'); S.selRdr = null; }
 function adjCount(d) { const i = document.getElementById('cntInp'); i.value = Math.max(1, (parseInt(i.value) || 1) + d); }
 
@@ -694,15 +731,15 @@ async function saveEntry() {
   if (!S.entries[k]) S.entries[k] = {};
   S.entries[k][S.selRdr] = (S.entries[k][S.selRdr] || 0) + c;
   closeModal();
-  renderAll();
-  renderCalendar();
-  await saveSharedData();
+  
   const tot = grandTotal();
+  await saveSharedData();
+  
   if (tot % 41 === 0 && tot > 0) setTimeout(() => alert('🎉 ' + Math.floor(tot / 41) + '. hatim tamamlandı! Hayırlı olsun.'), 200);
   showToast('✓ Kaydedildi');
 }
 
-// ── EDIT DAY ENTRIES MODAL ──
+// ── EDIT DAY ENTRIES ──
 function openEditDayModal(dateKey) {
   S.editDateKey = dateKey;
   const dd = S.entries[dateKey] || {};
@@ -710,6 +747,7 @@ function openEditDayModal(dateKey) {
   const ms = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
   document.getElementById('editDateLabel').textContent = parseInt(d) + ' ' + ms[parseInt(m) - 1] + ' ' + y + ' tarihli kayıtlar';
   const list = document.getElementById('editEntryList');
+  
   if (!Object.keys(dd).length) { list.innerHTML = '<div style="color:var(--muted);font-size:.78rem;text-align:center">Bu gün kayıt yok.</div>'; }
   else {
     list.innerHTML = Object.entries(dd).map(([r, c]) =>
@@ -722,6 +760,7 @@ function openEditDayModal(dateKey) {
   }
   document.getElementById('editOverlay').classList.add('open');
 }
+
 function closeEditModal() { document.getElementById('editOverlay').classList.remove('open'); S.editDateKey = null; }
 
 function removeEditEntry(reader) {
@@ -742,8 +781,6 @@ async function saveEditEntries() {
     S.entries[S.editDateKey] = newEntries;
   }
   closeEditModal();
-  renderAll();
-  renderCalendar();
   await saveSharedData();
   showToast('✓ Düzenleme kaydedildi');
 }
@@ -756,6 +793,7 @@ function openEditRdrModal(name) {
   document.getElementById('editRdrOverlay').classList.add('open');
   setTimeout(() => document.getElementById('editRdrInp').focus(), 200);
 }
+
 function closeEditRdrModal() { document.getElementById('editRdrOverlay').classList.remove('open'); S.editRdrOld = null; }
 
 async function saveEditReader() {
@@ -764,20 +802,19 @@ async function saveEditReader() {
   if (!newName) { err.textContent = 'İsim boş bırakılamaz.'; return; }
   if (newName === S.editRdrOld) { closeEditRdrModal(); return; }
   if (S.readers.includes(newName)) { err.textContent = 'Bu isim zaten var.'; return; }
+  
   const old = S.editRdrOld;
-  // rename in readers array
   const idx = S.readers.indexOf(old);
   if (idx > -1) S.readers[idx] = newName;
-  // rename in all entries
+  
   Object.keys(S.entries).forEach(dk => {
     if (S.entries[dk][old] !== undefined) {
       S.entries[dk][newName] = S.entries[dk][old];
       delete S.entries[dk][old];
     }
   });
+  
   closeEditRdrModal();
-  renderAll();
-  renderCalendar();
   await saveSharedData();
   showToast('✓ İsim güncellendi');
 }
@@ -790,27 +827,31 @@ function confirmDeleteReader(name) {
   document.getElementById('confirmOkBtn').onclick = execDeleteReader;
   document.getElementById('confirmOverlay').classList.add('open');
 }
+
 async function execDeleteReader() {
   const name = S.pendingConfirm.name;
   S.readers = S.readers.filter(r => r !== name);
-  Object.keys(S.entries).forEach(dk => { delete S.entries[dk][name]; if (!Object.keys(S.entries[dk]).length) delete S.entries[dk]; });
+  Object.keys(S.entries).forEach(dk => { 
+    delete S.entries[dk][name]; 
+    if (!Object.keys(S.entries[dk]).length) delete S.entries[dk]; 
+  });
   closeConfirm();
-  renderAll();
-  renderCalendar();
   await saveSharedData();
   showToast('🗑️ Okuyucu silindi');
 }
 
-// ── CONFIRM MODAL ──
 function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); S.pendingConfirm = null; }
 
 // ── CALENDAR ──
 function renderCalendar() {
   const ms = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  document.getElementById('calTitle').textContent = ms[S.calM] + ' ' + S.calY;
+  const titleEl = document.getElementById('calTitle');
+  if(titleEl) titleEl.textContent = ms[S.calM] + ' ' + S.calY;
+  
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const fd = new Date(S.calY, S.calM, 1).getDay(), off = fd === 0 ? 6 : fd - 1;
   const dim = new Date(S.calY, S.calM + 1, 0).getDate();
+  
   let h = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'].map(d => `<div class="cal-dl">${d}</div>`).join('');
   for (let i = 0; i < off; i++) h += '<div class="cal-d empty"></div>';
   for (let d = 1; d <= dim; d++) {
@@ -860,14 +901,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closeEditModal(); closeEditRdrModal(); closeConfirm(); }
 });
 
-// Enter on add reader input
 document.getElementById('newRdrName').addEventListener('keydown', e => { if (e.key === 'Enter') addReader(); });
-
-// ── AUTO-LOGIN FROM SESSION ──
-(async function init() {
-  const sess = getSession();
-  if (sess) { S.user = sess; await showApp(); }
-})();
 </script>
 </body>
 </html>
