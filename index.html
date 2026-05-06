@@ -1,158 +1,202 @@
-
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vakıa Hatim Takip</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
 :root{
   --g1:#0f5132;--g2:#198754;--g3:#20c997;
   --gold:#d4a017;--gold-l:#fff8e6;--gold-dark:#5a4010;
   --bg:#f4f6f5;--card:#fff;--text:#1a1f1e;--muted:#6b7b76;
   --border:#e0e8e4;--shadow:0 2px 12px rgba(0,0,0,0.07);
+  --danger:#dc3545;
 }
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
 
-/* AUTH */
+/* ── AUTH ── */
 #authWrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:linear-gradient(150deg,#0f5132 0%,#198754 55%,#20c997 100%)}
-.auth-box{background:#fff;border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:360px;box-shadow:0 16px 48px rgba(0,0,0,0.18)}
+.auth-box{background:#fff;border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:380px;box-shadow:0 16px 48px rgba(0,0,0,0.18)}
 .auth-brand{text-align:center;margin-bottom:1.75rem}
-.auth-brand .arabic{font-family:'Amiri',serif;font-size:2rem;color:var(--g1);display:block;line-height:1.3}
+.auth-brand .arabic{font-family:'Amiri',serif;font-size:2.1rem;color:var(--g1);display:block;line-height:1.3}
 .auth-brand h1{font-size:1rem;font-weight:700;color:var(--g1);margin-top:0.25rem}
 .auth-brand p{font-size:0.72rem;color:var(--muted);margin-top:0.15rem}
 .auth-tabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:1.5rem;gap:3px}
-.auth-tab{flex:1;padding:0.5rem;text-align:center;border:none;background:none;border-radius:7px;font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.2s;font-family:'Plus Jakarta Sans',sans-serif}
+.auth-tab{flex:1;padding:0.5rem;text-align:center;border:none;background:none;border-radius:7px;font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
 .auth-tab.active{background:#fff;color:var(--g1);box-shadow:0 1px 6px rgba(0,0,0,0.08)}
 .auth-form{display:none}.auth-form.active{display:block}
 .field{margin-bottom:0.9rem}
-.field label{display:block;font-size:0.72rem;font-weight:700;color:var(--g1);margin-bottom:0.35rem;letter-spacing:0.03em}
-.field input{width:100%;padding:0.7rem 0.9rem;border:1.5px solid var(--border);border-radius:10px;font-size:0.9rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border 0.2s;background:#fafcfb;-webkit-appearance:none}
-.field input:focus{border-color:var(--g2);background:#fff}
-.btn-auth{width:100%;padding:0.8rem;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border:none;border-radius:12px;font-size:0.92rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:0.4rem}
-.auth-err{color:#dc3545;font-size:0.75rem;text-align:center;min-height:1.1em;margin-top:0.4rem}
-.auth-ok{color:var(--g2);font-size:0.75rem;text-align:center;min-height:1.1em;margin-top:0.4rem}
-.hint{font-size:0.7rem;color:var(--muted);text-align:center;margin-top:0.9rem}
+.field label{display:block;font-size:0.7rem;font-weight:700;color:var(--g1);margin-bottom:.35rem;letter-spacing:.03em}
+.field input{width:100%;padding:.7rem .9rem;border:1.5px solid var(--border);border-radius:10px;font-size:.9rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border .2s;background:#fafcfb;-webkit-appearance:none}
+.field input:focus{border-color:var(--g2)}
+.btn-auth{width:100%;padding:.8rem;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border:none;border-radius:12px;font-size:.92rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:.4rem;transition:opacity .15s}
+.btn-auth:active{opacity:.85}
+.auth-err{color:var(--danger);font-size:.75rem;text-align:center;min-height:1.1em;margin-top:.4rem}
+.auth-ok{color:var(--g2);font-size:.75rem;text-align:center;min-height:1.1em;margin-top:.4rem}
+.hint{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.9rem}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* APP */
+/* ── APP ── */
 #appWrap{display:none;min-height:100vh;background:var(--bg);max-width:100%;overflow-x:hidden}
-.topbar{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;padding:0.75rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-brand .arabic-sm{font-family:'Amiri',serif;font-size:1.05rem}
-.topbar-brand p{font-size:0.65rem;opacity:0.7;margin-top:1px}
-.user-pill{display:flex;align-items:center;gap:0.4rem}
-.user-pill .av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;flex-shrink:0}
-.user-pill .uname{font-size:0.75rem;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.logout-btn{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:0.28rem 0.6rem;border-radius:7px;font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap}
+.topbar-brand p{font-size:.65rem;opacity:.7;margin-top:1px}
+.user-pill{display:flex;align-items:center;gap:.4rem}
+.user-pill .av{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0}
+.user-pill .uname{font-size:.75rem;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.logout-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:.28rem .6rem;border-radius:7px;font-size:.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap}
 
-.page{padding:0.75rem;width:100%;overflow-x:hidden}
-.s-header{font-size:0.72rem;font-weight:800;color:var(--g1);padding:0.35rem 0 0.6rem;border-bottom:2px solid var(--border);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:0.35rem}
+.page{padding:.75rem;width:100%;overflow-x:hidden}
+.s-header{font-size:.72rem;font-weight:800;color:var(--g1);padding:.35rem 0 .6rem;border-bottom:2px solid var(--border);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.05em;display:flex;align-items:center;gap:.35rem}
+
+/* LOADING */
+#loadingOverlay{position:fixed;inset:0;background:rgba(255,255,255,.85);z-index:200;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.7rem}
+.load-spinner{width:36px;height:36px;border:3px solid #e6f4ee;border-top-color:var(--g2);border-radius:50%;animation:spin .7s linear infinite}
+#loadingOverlay p{font-size:.8rem;color:var(--muted);font-weight:600}
 
 /* LEADERBOARD */
-.lb-podium{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:0.4rem;margin-bottom:0.65rem;align-items:flex-end;width:100%}
-.podium-card{background:var(--card);border-radius:12px;padding:0.65rem 0.4rem;text-align:center;box-shadow:var(--shadow);position:relative;cursor:pointer;min-width:0;overflow:hidden}
+.lb-podium{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:.4rem;margin-bottom:.65rem;align-items:flex-end;width:100%}
+.podium-card{background:var(--card);border-radius:12px;padding:.65rem .4rem;text-align:center;box-shadow:var(--shadow);position:relative;cursor:pointer;min-width:0;overflow:hidden}
 .podium-card.p1{background:linear-gradient(160deg,#fffbe6,#fff8d0);border:2px solid var(--gold);padding-top:1rem}
 .podium-card.p2{background:linear-gradient(160deg,#f5f5f5,#efefef);border:2px solid #c0c0c0}
 .podium-card.p3{background:linear-gradient(160deg,#fff3ec,#ffe8d8);border:2px solid #cd7f32}
-.podium-rank{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:0.58rem;font-weight:800;padding:0.12rem 0.45rem;border-radius:99px;white-space:nowrap;color:#fff}
-.p1 .podium-rank{background:var(--gold)}
-.p2 .podium-rank{background:#888}
-.p3 .podium-rank{background:#cd7f32}
-.podium-medal{font-size:1.2rem;display:block;margin-bottom:0.25rem}
-.podium-av{width:34px;height:34px;border-radius:50%;margin:0 auto 0.35rem;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:#fff}
+.podium-rank{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:.58rem;font-weight:800;padding:.12rem .45rem;border-radius:99px;white-space:nowrap;color:#fff}
+.p1 .podium-rank{background:var(--gold)}.p2 .podium-rank{background:#888}.p3 .podium-rank{background:#cd7f32}
+.podium-medal{font-size:1.2rem;display:block;margin-bottom:.25rem}
+.podium-av{width:34px;height:34px;border-radius:50%;margin:0 auto .35rem;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff}
 .p1 .podium-av{background:linear-gradient(135deg,var(--gold),#f0c040)}
 .p2 .podium-av{background:linear-gradient(135deg,#888,#bbb)}
 .p3 .podium-av{background:linear-gradient(135deg,#cd7f32,#e8a060)}
-.podium-name{font-size:0.65rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;padding:0 2px}
-.podium-count{font-size:0.95rem;font-weight:800;color:var(--g2);margin-top:0.15rem}
-.podium-lbl{font-size:0.55rem;color:var(--muted)}
+.podium-name{font-size:.62rem;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;padding:0 2px}
+.podium-count{font-size:.95rem;font-weight:800;color:var(--g2);margin-top:.15rem}
+.podium-lbl{font-size:.55rem;color:var(--muted)}
 
-.lb-rest{display:flex;flex-direction:column;gap:0.35rem}
-.lb-row{display:flex;align-items:center;gap:0.6rem;background:var(--card);border-radius:10px;padding:0.6rem 0.75rem;box-shadow:var(--shadow);cursor:pointer;min-width:0}
-.lb-pos{min-width:20px;font-size:0.7rem;font-weight:800;color:var(--muted);text-align:center}
-.lb-av{width:30px;height:30px;border-radius:50%;background:#e6f4ee;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--g1);flex-shrink:0}
+.lb-rest{display:flex;flex-direction:column;gap:.35rem}
+.lb-row{display:flex;align-items:center;gap:.6rem;background:var(--card);border-radius:10px;padding:.6rem .75rem;box-shadow:var(--shadow);cursor:pointer;min-width:0}
+.lb-pos{min-width:20px;font-size:.7rem;font-weight:800;color:var(--muted);text-align:center}
+.lb-av{width:30px;height:30px;border-radius:50%;background:#e6f4ee;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:var(--g1);flex-shrink:0}
 .lb-info{flex:1;min-width:0}
-.lb-name{font-size:0.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-name{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lb-bar{height:3px;background:#e6f4ee;border-radius:99px;margin-top:3px}
 .lb-barfill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:99px}
-.lb-cnt{font-size:0.85rem;font-weight:800;color:var(--g2);flex-shrink:0}
+.lb-cnt{font-size:.85rem;font-weight:800;color:var(--g2);flex-shrink:0}
 
 /* STATS */
-.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.75rem;width:100%}
-.stat-card{background:var(--card);border-radius:12px;padding:0.85rem 0.9rem;box-shadow:var(--shadow);min-width:0}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem;width:100%}
+.stat-card{background:var(--card);border-radius:12px;padding:.85rem .9rem;box-shadow:var(--shadow);min-width:0}
 .stat-card .sv{font-size:1.6rem;font-weight:800;color:var(--g2);line-height:1}
-.stat-card .sl{font-size:0.62rem;font-weight:700;color:var(--muted);margin-top:0.25rem;text-transform:uppercase;letter-spacing:0.03em}
+.stat-card .sl{font-size:.62rem;font-weight:700;color:var(--muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.03em}
 .stat-card.gold .sv{color:var(--gold)}
-.progress-wrap{background:var(--card);border-radius:12px;padding:0.9rem;box-shadow:var(--shadow);margin-bottom:0.75rem;width:100%}
-.progress-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
-.progress-head span{font-size:0.75rem;font-weight:700;color:var(--g1)}
+.progress-wrap{background:var(--card);border-radius:12px;padding:.9rem;box-shadow:var(--shadow);margin-bottom:.75rem}
+.progress-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.progress-head span{font-size:.75rem;font-weight:700;color:var(--g1)}
 .pbar{height:9px;background:#e6f4ee;border-radius:99px;overflow:hidden}
-.pfill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:99px;transition:width 0.6s}
+.pfill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g3));border-radius:99px;transition:width .6s}
 
 /* OKUYUCULAR */
-.section{background:var(--card);border-radius:14px;padding:0.9rem;box-shadow:var(--shadow);margin-bottom:0.75rem;width:100%;overflow:hidden}
-.section-title{font-size:0.7rem;font-weight:800;color:var(--g1);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.7rem;display:flex;align-items:center;gap:0.35rem}
-.add-row{display:flex;gap:0.4rem;margin-bottom:0.9rem;width:100%}
-.add-row input{flex:1;min-width:0;padding:0.65rem 0.8rem;border:1.5px solid var(--border);border-radius:9px;font-size:0.85rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;background:#fafcfb;-webkit-appearance:none}
+.section{background:var(--card);border-radius:14px;padding:.9rem;box-shadow:var(--shadow);margin-bottom:.75rem;width:100%;overflow:hidden}
+.section-title{font-size:.7rem;font-weight:800;color:var(--g1);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem;display:flex;align-items:center;gap:.35rem}
+.add-row{display:flex;gap:.4rem;margin-bottom:.9rem;width:100%}
+.add-row input{flex:1;min-width:0;padding:.65rem .8rem;border:1.5px solid var(--border);border-radius:9px;font-size:.85rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none;background:#fafcfb;-webkit-appearance:none}
 .add-row input:focus{border-color:var(--g2)}
-.btn-add{padding:0.65rem 0.9rem;background:var(--g2);color:#fff;border:none;border-radius:9px;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;flex-shrink:0}
-.rdr-item{display:flex;align-items:center;gap:0.6rem;background:var(--bg);border-radius:10px;padding:0.75rem 0.85rem;margin-bottom:0.4rem;cursor:pointer;border:2px solid transparent;min-width:0;width:100%}
-.rdr-item:active{background:#e6f4ee}
+.btn-add{padding:.65rem .9rem;background:var(--g2);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;flex-shrink:0}
+.rdr-item{display:flex;align-items:center;gap:.6rem;background:var(--bg);border-radius:10px;padding:.7rem .85rem;margin-bottom:.4rem;border:2px solid transparent;min-width:0;width:100%}
 .rdr-item.mine{border-color:var(--g2);background:#f0faf5}
-.rdr-av{width:34px;height:34px;border-radius:50%;background:#e6f4ee;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--g1);flex-shrink:0}
-.rdr-item-info{flex:1;min-width:0}
-.rdr-item-name{font-weight:700;font-size:0.87rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rdr-item-total{font-size:0.67rem;color:var(--muted);margin-top:1px}
-.chip{background:#e6f4ee;color:var(--g1);font-size:0.62rem;font-weight:700;padding:0.18rem 0.55rem;border-radius:99px;flex-shrink:0}
+.rdr-av{width:34px;height:34px;border-radius:50%;background:#e6f4ee;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:var(--g1);flex-shrink:0}
+.rdr-item-info{flex:1;min-width:0;cursor:pointer}
+.rdr-item-name{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rdr-item-total{font-size:.67rem;color:var(--muted);margin-top:1px}
+.chip{background:#e6f4ee;color:var(--g1);font-size:.62rem;font-weight:700;padding:.18rem .55rem;border-radius:99px;flex-shrink:0;cursor:pointer;border:none}
 .chip.mine{background:var(--g2);color:#fff}
+.chip.edit{background:#fff3e0;color:#e65100;border:1px solid #ffcc80;margin-left:.25rem}
+.chip.del{background:#ffeef0;color:#c62828;border:1px solid #ffcdd2;margin-left:.25rem}
+.chip-row{display:flex;gap:.2rem;flex-shrink:0}
 
 /* TAKVİM */
-.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.65rem}
-.cal-nav-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:0.28rem 0.65rem;cursor:pointer;font-size:0.85rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text)}
-.cal-month-title{font-weight:800;font-size:0.9rem;color:var(--g1)}
+.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem}
+.cal-nav-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.28rem .65rem;cursor:pointer;font-size:.85rem;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text)}
+.cal-month-title{font-weight:800;font-size:.9rem;color:var(--g1)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;width:100%}
-.cal-dl{text-align:center;font-size:0.58rem;font-weight:700;color:var(--muted);padding:0.18rem 0}
-.cal-d{text-align:center;border-radius:8px;padding:0.25rem 0;min-height:38px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;cursor:pointer}
+.cal-dl{text-align:center;font-size:.58rem;font-weight:700;color:var(--muted);padding:.18rem 0}
+.cal-d{text-align:center;border-radius:8px;padding:.25rem 0;min-height:38px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:1px;cursor:pointer}
 .cal-d.empty{pointer-events:none}
 .cal-d:active{background:#e6f4ee}
 .cal-d.today{background:#e6f4ee}
 .cal-d.today .dnum{background:var(--g2);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-weight:800}
-.cal-d .dnum{font-size:0.72rem;font-weight:600;line-height:20px}
-.cal-d .dcnt{font-size:0.55rem;color:var(--g2);font-weight:800;background:#e6f4ee;border-radius:3px;padding:0 2px;line-height:1.5}
-.cal-detail-box{background:#f0faf5;border-radius:10px;padding:0.75rem;margin-top:0.65rem}
-.cal-detail-box h4{font-size:0.78rem;font-weight:700;color:var(--g1);margin-bottom:0.45rem}
-.cal-dr{display:flex;justify-content:space-between;font-size:0.76rem;padding:0.22rem 0;border-bottom:1px solid rgba(32,201,151,0.15)}
+.cal-d .dnum{font-size:.72rem;font-weight:600;line-height:20px}
+.cal-d .dcnt{font-size:.55rem;color:var(--g2);font-weight:800;background:#e6f4ee;border-radius:3px;padding:0 2px;line-height:1.5}
+.cal-detail-box{background:#f0faf5;border-radius:10px;padding:.75rem;margin-top:.65rem}
+.cal-detail-box h4{font-size:.78rem;font-weight:700;color:var(--g1);margin-bottom:.45rem}
+.cal-dr{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;padding:.22rem 0;border-bottom:1px solid rgba(32,201,151,.15)}
 .cal-dr:last-child{border-bottom:none}
 .cal-dr strong{color:var(--g2)}
+.cal-dr-del{background:none;border:none;color:var(--danger);font-size:.7rem;cursor:pointer;padding:.1rem .3rem;border-radius:4px;font-family:'Plus Jakarta Sans',sans-serif}
 
 /* USUL */
-.usul-intro{background:linear-gradient(135deg,#f0faf5,#e6f4ee);border-radius:12px;padding:0.9rem;margin-bottom:0.75rem;border-left:4px solid var(--g2)}
-.usul-intro .arabic-big{font-family:'Amiri',serif;font-size:1.4rem;color:var(--g1);display:block;text-align:center;margin-bottom:0.45rem}
-.usul-intro p{font-size:0.78rem;line-height:1.65;color:#2a3a35}
-.quote-block{background:var(--gold-l);border-radius:12px;padding:0.85rem;border-left:4px solid var(--gold);font-size:0.78rem;line-height:1.65;font-style:italic;color:var(--gold-dark);margin-bottom:0.75rem}
-.quote-block cite{display:block;text-align:right;font-size:0.68rem;color:var(--muted);margin-top:0.35rem;font-style:normal}
-.steps-wrap{display:flex;flex-direction:column;gap:0.35rem}
-.step-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.6rem;background:var(--bg);border-radius:9px}
-.step-num{min-width:22px;height:22px;border-radius:50%;background:var(--g2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:800;flex-shrink:0;margin-top:1px}
-.step-text{font-size:0.8rem;line-height:1.5;padding-top:1px}
-.step-group-title{font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:0.45rem 0 0.25rem 0.15rem}
+.usul-intro{background:linear-gradient(135deg,#f0faf5,#e6f4ee);border-radius:12px;padding:.9rem;margin-bottom:.75rem;border-left:4px solid var(--g2)}
+.usul-intro .arabic-big{font-family:'Amiri',serif;font-size:1.4rem;color:var(--g1);display:block;text-align:center;margin-bottom:.45rem}
+.usul-intro p{font-size:.78rem;line-height:1.65;color:#2a3a35}
+.quote-block{background:var(--gold-l);border-radius:12px;padding:.85rem;border-left:4px solid var(--gold);font-size:.78rem;line-height:1.65;font-style:italic;color:var(--gold-dark);margin-bottom:.75rem}
+.quote-block cite{display:block;text-align:right;font-size:.68rem;color:var(--muted);margin-top:.35rem;font-style:normal}
+.steps-wrap{display:flex;flex-direction:column;gap:.35rem}
+.step-item{display:flex;align-items:flex-start;gap:.6rem;padding:.6rem;background:var(--bg);border-radius:9px}
+.step-num{min-width:22px;height:22px;border-radius:50%;background:var(--g2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.step-text{font-size:.8rem;line-height:1.5;padding-top:1px}
+.step-group-title{font-size:.65rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.45rem 0 .25rem .15rem}
 
-/* MODAL */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:flex-end;justify-content:center}
+/* MODALS */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
-.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2rem;width:100%;max-width:480px}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
 .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.1rem}
-.modal-title{font-size:0.95rem;font-weight:800;color:var(--g1);margin-bottom:0.2rem}
+.modal-title{font-size:.95rem;font-weight:800;color:var(--g1);margin-bottom:.2rem}
 .modal-rdr{font-family:'Amiri',serif;font-size:1.15rem;color:var(--g1)}
-.modal-date{font-size:0.68rem;color:var(--muted);margin-bottom:1.1rem;display:block}
-.count-row{display:flex;align-items:center;gap:0.65rem;margin-bottom:0.9rem;background:var(--bg);border-radius:11px;padding:0.7rem 0.9rem}
-.count-row label{flex:1;font-size:0.78rem;font-weight:600;color:var(--muted)}
-.count-ctrl{display:flex;align-items:center;gap:0.45rem}
+.modal-date{font-size:.68rem;color:var(--muted);margin-bottom:1.1rem;display:block}
+.count-row{display:flex;align-items:center;gap:.65rem;margin-bottom:.9rem;background:var(--bg);border-radius:11px;padding:.7rem .9rem}
+.count-row label{flex:1;font-size:.78rem;font-weight:600;color:var(--muted)}
+.count-ctrl{display:flex;align-items:center;gap:.45rem}
 .cnt-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--g1);flex-shrink:0}
-.cnt-inp{width:56px;text-align:center;padding:0.4rem;border:1.5px solid var(--border);border-radius:8px;font-size:1.1rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;outline:none;-webkit-appearance:none}
+.cnt-inp{width:56px;text-align:center;padding:.4rem;border:1.5px solid var(--border);border-radius:8px;font-size:1.1rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;outline:none;-webkit-appearance:none}
 .cnt-inp:focus{border-color:var(--g2)}
-.modal-total-box{font-size:0.75rem;color:var(--muted);margin-bottom:1.1rem;padding:0.45rem 0.7rem;background:#f0faf5;border-radius:8px}
-.modal-btns{display:grid;grid-template-columns:1fr 2fr;gap:0.45rem}
-.btn-cancel{padding:0.8rem;background:var(--bg);color:var(--text);border:none;border-radius:11px;font-size:0.88rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
-.btn-save{padding:0.8rem;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border:none;border-radius:11px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
-</style>
+.modal-total-box{font-size:.75rem;color:var(--muted);margin-bottom:1.1rem;padding:.45rem .7rem;background:#f0faf5;border-radius:8px}
+.modal-btns{display:grid;grid-template-columns:1fr 2fr;gap:.45rem}
+.btn-cancel{padding:.8rem;background:var(--bg);color:var(--text);border:none;border-radius:11px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-save{padding:.8rem;background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;border:none;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+.btn-danger{padding:.8rem;background:#ffeef0;color:var(--danger);border:1px solid #ffcdd2;border-radius:11px;font-size:.88rem;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
 
+/* EDIT ENTRY MODAL */
+.edit-entry-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.edit-entry-row{display:flex;align-items:center;gap:.5rem;background:var(--bg);border-radius:9px;padding:.6rem .8rem}
+.edit-entry-name{flex:1;font-size:.82rem;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.edit-entry-inp{width:60px;text-align:center;padding:.35rem;border:1.5px solid var(--border);border-radius:7px;font-size:.95rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;outline:none;-webkit-appearance:none}
+.edit-entry-inp:focus{border-color:var(--g2)}
+.edit-entry-del{background:none;border:none;color:var(--danger);font-size:1.1rem;cursor:pointer;padding:.2rem .3rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);background:#1a1f1e;color:#fff;padding:.6rem 1.2rem;border-radius:99px;font-size:.78rem;font-weight:600;z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* CONFIRM MODAL */
+.confirm-box{background:#fff;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem 2.5rem;width:100%;max-width:480px}
+.confirm-box h3{font-size:.95rem;font-weight:800;color:var(--text);margin-bottom:.5rem}
+.confirm-box p{font-size:.82rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5}
+.confirm-btns{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+
+/* SYNC INDICATOR */
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#aaa;display:inline-block;margin-left:4px;vertical-align:middle;transition:background .4s}
+.sync-dot.ok{background:#20c997}
+.sync-dot.err{background:#dc3545}
+.sync-dot.sync{background:#faad14;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
 <div id="authWrap">
   <div class="auth-box">
     <div class="auth-brand">
@@ -168,26 +212,27 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
       <div class="field"><label>KULLANICI ADI</label><input type="text" id="lUser" placeholder="kullanıcı adınız" autocomplete="username" inputmode="text"></div>
       <div class="field"><label>ŞİFRE</label><input type="password" id="lPass" placeholder="şifreniz" autocomplete="current-password"></div>
       <div class="auth-err" id="lErr"></div>
-      <button class="btn-auth" onclick="doLogin()">Giriş Yap →</button>
+      <button class="btn-auth" id="btnLogin" onclick="doLogin()">Giriş Yap →</button>
       <p class="hint">Hesabınız yok mu? Kayıt Ol sekmesine geçin.</p>
     </div>
     <div class="auth-form" id="formRegister">
       <div class="field"><label>AD SOYAD</label><input type="text" id="rName" placeholder="adınız soyadınız"></div>
-      <div class="field"><label>KULLANICI ADI</label><input type="text" id="rUser" placeholder="kullanıcı adı" autocomplete="username" inputmode="text"></div>
-      <div class="field"><label>ŞİFRE</label><input type="password" id="rPass" placeholder="şifre oluşturun" autocomplete="new-password"></div>
+      <div class="field"><label>KULLANICI ADI</label><input type="text" id="rUser" placeholder="kullanıcı adı (en az 3 karakter)" autocomplete="username" inputmode="text"></div>
+      <div class="field"><label>ŞİFRE</label><input type="password" id="rPass" placeholder="en az 4 karakter" autocomplete="new-password"></div>
       <div class="field"><label>ŞİFRE TEKRAR</label><input type="password" id="rPass2" placeholder="tekrar girin" autocomplete="new-password"></div>
       <div class="auth-err" id="rErr"></div>
       <div class="auth-ok" id="rOk"></div>
-      <button class="btn-auth" onclick="doRegister()">Kayıt Ol →</button>
+      <button class="btn-auth" id="btnRegister" onclick="doRegister()">Kayıt Ol →</button>
     </div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="appWrap">
   <div class="topbar">
     <div class="topbar-brand">
       <div class="arabic-sm">سُورَةُ الْوَاقِعَة</div>
-      <p>Vakıa Hatim Takip</p>
+      <p>Vakıa Hatim Takip <span class="sync-dot" id="syncDot" title="Sync durumu"></span></p>
     </div>
     <div class="user-pill">
       <div class="av" id="topAv"></div>
@@ -196,11 +241,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     </div>
   </div>
 
-  <div class="page">
+  <div id="loadingOverlay" style="display:none">
+    <div class="load-spinner"></div>
+    <p id="loadingMsg">Veriler yükleniyor...</p>
+  </div>
 
+  <div class="page">
     <div class="s-header">🏆 En Çok Okuyanlar</div>
     <div class="lb-podium" id="lbPodium"></div>
-    <div class="lb-rest" id="lbRest" style="margin-bottom:0.75rem"></div>
+    <div class="lb-rest" id="lbRest" style="margin-bottom:.75rem"></div>
 
     <div class="s-header">📊 Genel Durum</div>
     <div class="stat-row">
@@ -212,10 +261,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
     <div class="progress-wrap">
       <div class="progress-head">
         <span>Hatim İlerlemesi (41 adet)</span>
-        <span id="prgPct" style="color:var(--g2);font-weight:800;font-size:0.8rem">%0</span>
+        <span id="prgPct" style="color:var(--g2);font-weight:800;font-size:.8rem">%0</span>
       </div>
       <div class="pbar"><div class="pfill" id="prgFill" style="width:0%"></div></div>
-      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.35rem" id="prgText">0 / 41</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-top:.35rem" id="prgText">0 / 41</div>
     </div>
 
     <div class="s-header">👥 Okuyucular</div>
@@ -225,7 +274,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <input type="text" id="newRdrName" placeholder="Ad Soyad...">
         <button class="btn-add" onclick="addReader()">+ Ekle</button>
       </div>
-      <div class="section-title">📿 Tıklayarak okuma girişi yapın</div>
+      <div class="section-title">📿 Okuma girişi için isime tıklayın</div>
       <div id="rdrList"></div>
     </div>
 
@@ -244,14 +293,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
         <div class="step-group-title">🌙 Başlangıç</div>
         <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>1 adet</strong> Fâtiha-i Şerife</div></div>
         <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>3 adet</strong> İhlâs-ı Şerif</div></div>
-        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>7 adet</strong> İstiğfâr-ı Şerif <span style="color:var(--muted);font-size:0.72rem">(11 de olabilir)</span></div></div>
-        <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>7 adet</strong> Salâvat-ı Şerife <span style="color:var(--muted);font-size:0.72rem">(11 de olabilir)</span></div></div>
+        <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>7 adet</strong> İstiğfâr-ı Şerif <span style="color:var(--muted);font-size:.72rem">(11 de olabilir)</span></div></div>
+        <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>7 adet</strong> Salâvat-ı Şerife <span style="color:var(--muted);font-size:.72rem">(11 de olabilir)</span></div></div>
         <div class="step-group-title">📗 Sure</div>
         <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Fâtiha-i Şerife</strong></div></div>
         <div class="step-item"><div class="step-num">6</div><div class="step-text"><strong>Sûre-i Vakıa</strong> okunur</div></div>
         <div class="step-item"><div class="step-num">7</div><div class="step-text"><strong>Fâtiha-i Şerife</strong></div></div>
         <div class="step-group-title">🤲 Bitiş</div>
-        <div class="step-item"><div class="step-num">8</div><div class="step-text"><strong>7 adet</strong> Salâvat-ı Şerife <span style="color:var(--muted);font-size:0.72rem">(11 de olabilir)</span></div></div>
+        <div class="step-item"><div class="step-num">8</div><div class="step-text"><strong>7 adet</strong> Salâvat-ı Şerife <span style="color:var(--muted);font-size:.72rem">(11 de olabilir)</span></div></div>
         <div class="step-item"><div class="step-num">9</div><div class="step-text"><strong>Sûre-i Vakıa Duası</strong> okunur</div></div>
       </div>
     </div>
@@ -271,6 +320,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- ENTRY MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -293,92 +343,276 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   </div>
 </div>
 
+<!-- EDIT ENTRY MODAL -->
+<div class="overlay" id="editOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Giriş Düzenle</div>
+    <span class="modal-date" id="editDateLabel"></span>
+    <div class="edit-entry-list" id="editEntryList"></div>
+    <div class="modal-btns" style="grid-template-columns:1fr 2fr">
+      <button class="btn-cancel" onclick="closeEditModal()">İptal</button>
+      <button class="btn-save" onclick="saveEditEntries()">Kaydet ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT READER MODAL -->
+<div class="overlay" id="editRdrOverlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ İsim Düzenle</div>
+    <div class="field" style="margin-top:.5rem"><label>YENİ İSİM</label><input type="text" id="editRdrInp" placeholder="Yeni ad soyad..."></div>
+    <div class="auth-err" id="editRdrErr"></div>
+    <div class="modal-btns" style="margin-top:.9rem;grid-template-columns:1fr 2fr">
+      <button class="btn-cancel" onclick="closeEditRdrModal()">İptal</button>
+      <button class="btn-save" onclick="saveEditReader()">Kaydet ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="modal-handle"></div>
+    <h3 id="confirmTitle">Emin misiniz?</h3>
+    <p id="confirmMsg"></p>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">İptal</button>
+      <button class="btn-danger" id="confirmOkBtn">Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-let S={user:null,readers:[],entries:{},calY:new Date().getFullYear(),calM:new Date().getMonth(),selRdr:null};
-const ls=(k,v)=>{if(v===undefined)return JSON.parse(localStorage.getItem(k)||'null');localStorage.setItem(k,JSON.stringify(v))};
-const ss=(k,v)=>{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)};
-const getUsers=()=>ls('vHUsers')||{};
-const saveUsers=u=>ls('vHUsers',u);
-const getData=()=>{const d=ls('vHData');if(d){S.readers=d.readers||[];S.entries=d.entries||{}}};
-const saveData=()=>ls('vHData',{readers:S.readers,entries:S.entries});
+// ── STATE ──
+const S = {
+  user: null,
+  readers: [],
+  entries: {},    // { "YYYY-MM-DD": { "Ad Soyad": count } }
+  calY: new Date().getFullYear(),
+  calM: new Date().getMonth(),
+  selRdr: null,
+  editDateKey: null,
+  editRdrOld: null,
+  pendingConfirm: null
+};
 
-function switchAuthTab(t){
-  document.querySelectorAll('.auth-tab').forEach((el,i)=>el.classList.toggle('active',i===(t==='login'?0:1)));
-  document.getElementById('formLogin').classList.toggle('active',t==='login');
-  document.getElementById('formRegister').classList.toggle('active',t==='register');
+// ── STORAGE HELPERS ──
+const SHARED_KEY = 'vakiaHatimData_v3';
+
+async function storageGet(key, shared = false) {
+  try {
+    const r = await window.storage.get(key, shared);
+    return r ? JSON.parse(r.value) : null;
+  } catch { return null; }
 }
-function doLogin(){
-  const u=document.getElementById('lUser').value.trim(),p=document.getElementById('lPass').value;
-  const err=document.getElementById('lErr');
-  if(!u||!p){err.textContent='Lütfen tüm alanları doldurun.';return;}
-  const users=getUsers();
-  if(!users[u]){err.textContent='Kullanıcı bulunamadı.';return;}
-  if(users[u].pass!==p){err.textContent='Şifre hatalı.';return;}
-  S.user={username:u,fullname:users[u].name};
-  ss('vHUser',JSON.stringify(S.user));
-  err.textContent='';showApp();
+async function storageSet(key, val, shared = false) {
+  try {
+    await window.storage.set(key, JSON.stringify(val), shared);
+    return true;
+  } catch { return false; }
 }
-function doRegister(){
-  const name=document.getElementById('rName').value.trim(),u=document.getElementById('rUser').value.trim(),p=document.getElementById('rPass').value,p2=document.getElementById('rPass2').value;
-  const err=document.getElementById('rErr'),ok=document.getElementById('rOk');
-  err.textContent='';ok.textContent='';
-  if(!name||!u||!p||!p2){err.textContent='Tüm alanları doldurun.';return;}
-  if(u.length<3){err.textContent='Kullanıcı adı en az 3 karakter.';return;}
-  if(p.length<4){err.textContent='Şifre en az 4 karakter.';return;}
-  if(p!==p2){err.textContent='Şifreler eşleşmiyor.';return;}
-  const users=getUsers();
-  if(users[u]){err.textContent='Bu kullanıcı adı alınmış.';return;}
-  users[u]={name:name,pass:p};saveUsers(users);
-  ok.textContent='✓ Kayıt başarılı! Giriş yapabilirsiniz.';
-  setTimeout(()=>{switchAuthTab('login');document.getElementById('lUser').value=u;},1400);
-}
-function doLogout(){
-  sessionStorage.removeItem('vHUser');S.user=null;
-  document.getElementById('authWrap').style.display='flex';
-  document.getElementById('appWrap').style.display='none';
-  document.getElementById('lUser').value='';document.getElementById('lPass').value='';
-}
-function showApp(){
-  document.getElementById('authWrap').style.display='none';
-  document.getElementById('appWrap').style.display='block';
-  const ini=(S.user.fullname||S.user.username).substring(0,2).toUpperCase();
-  document.getElementById('topAv').textContent=ini;
-  document.getElementById('topUser').textContent=S.user.fullname||S.user.username;
-  getData();renderAll();renderCalendar();
+async function storageDelete(key, shared = false) {
+  try { await window.storage.delete(key, shared); } catch {}
 }
 
-const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
-function getTotals(){const t={};S.readers.forEach(r=>{t[r]=0});Object.values(S.entries).forEach(day=>Object.entries(day).forEach(([r,c])=>{t[r]=(t[r]||0)+c}));return t}
-const grandTotal=()=>Object.values(getTotals()).reduce((a,b)=>a+b,0);
-const todayTotal=()=>Object.values(S.entries[todayKey()]||{}).reduce((a,b)=>a+b,0);
-
-function renderAll(){
-  const tot=grandTotal(),hat=Math.floor(tot/41),rem=tot%41,pct=Math.round(rem/41*100);
-  document.getElementById('stTotal').textContent=tot;
-  document.getElementById('stHatim').textContent=hat;
-  document.getElementById('stToday').textContent=todayTotal();
-  document.getElementById('stRdr').textContent=S.readers.length;
-  document.getElementById('prgPct').textContent='%'+pct;
-  document.getElementById('prgFill').style.width=pct+'%';
-  document.getElementById('prgText').textContent=rem+' / 41';
-  renderLeaderboard();renderReaderList();
+// ── SYNC DOT ──
+function syncDot(state) {
+  const d = document.getElementById('syncDot');
+  d.className = 'sync-dot ' + state;
 }
 
-function renderLeaderboard(){
-  const totals=getTotals();
-  const sorted=[...S.readers].sort((a,b)=>(totals[b]||0)-(totals[a]||0));
-  const max=sorted.length>0?(totals[sorted[0]]||1):1;
-  const podEl=document.getElementById('lbPodium'),restEl=document.getElementById('lbRest');
-  if(!sorted.length){
-    podEl.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:0.78rem;padding:0.75rem;background:var(--card);border-radius:12px;box-shadow:var(--shadow)">Henüz okuyucu eklenmedi.</div>';
-    restEl.innerHTML='';return;
+// ── TOAST ──
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── LOADING ──
+function showLoading(msg = 'Veriler yükleniyor...') {
+  document.getElementById('loadingMsg').textContent = msg;
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// ── SHARED DATA LOAD/SAVE ──
+async function loadSharedData() {
+  syncDot('sync');
+  const data = await storageGet(SHARED_KEY, true);
+  if (data) {
+    S.readers = data.readers || [];
+    S.entries = data.entries || {};
+  } else {
+    S.readers = [];
+    S.entries = {};
   }
-  const medals=['🥇','🥈','🥉'],rl=['1. Sıra','2. Sıra','3. Sıra'],pc=['p1','p2','p3'];
-  const top3=sorted.slice(0,Math.min(3,sorted.length));
-  let slots=['','',''];
-  top3.forEach((r,i)=>{
-    const cnt=totals[r]||0,ini=r.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    slots[i]=`<div class="podium-card ${pc[i]}" onclick="openModal('${r.replace(/'/g,"\\'")}')">
+  syncDot('ok');
+}
+
+async function saveSharedData() {
+  syncDot('sync');
+  const ok = await storageSet(SHARED_KEY, { readers: S.readers, entries: S.entries }, true);
+  syncDot(ok ? 'ok' : 'err');
+  if (!ok) showToast('⚠️ Kayıt başarısız, internet bağlantısını kontrol edin');
+}
+
+// ── USERS (shared) ──
+const USERS_KEY = 'vakiaHatimUsers_v2';
+async function getUsers() {
+  const u = await storageGet(USERS_KEY, true);
+  return u || {};
+}
+async function saveUsers(users) {
+  await storageSet(USERS_KEY, users, true);
+}
+
+// ── SESSION (local) ──
+const ssKey = 'vakiaHatimSession';
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem(ssKey)); } catch { return null; }
+}
+function setSession(user) {
+  sessionStorage.setItem(ssKey, JSON.stringify(user));
+}
+function clearSession() {
+  sessionStorage.removeItem(ssKey);
+}
+
+// ── AUTH UI ──
+function switchAuthTab(t) {
+  document.querySelectorAll('.auth-tab').forEach((el, i) => el.classList.toggle('active', i === (t === 'login' ? 0 : 1)));
+  document.getElementById('formLogin').classList.toggle('active', t === 'login');
+  document.getElementById('formRegister').classList.toggle('active', t === 'register');
+}
+
+function setBtnLoading(id, loading, label = '') {
+  const b = document.getElementById(id);
+  b.disabled = loading;
+  b.innerHTML = loading ? `<span class="spinner"></span> Lütfen bekleyin...` : label;
+}
+
+async function doLogin() {
+  const u = document.getElementById('lUser').value.trim();
+  const p = document.getElementById('lPass').value;
+  const err = document.getElementById('lErr');
+  if (!u || !p) { err.textContent = 'Lütfen tüm alanları doldurun.'; return; }
+  setBtnLoading('btnLogin', true);
+  err.textContent = '';
+  const users = await getUsers();
+  setBtnLoading('btnLogin', false, 'Giriş Yap →');
+  if (!users[u]) { err.textContent = 'Kullanıcı bulunamadı.'; return; }
+  if (users[u].pass !== p) { err.textContent = 'Şifre hatalı.'; return; }
+  S.user = { username: u, fullname: users[u].name };
+  setSession(S.user);
+  showApp();
+}
+
+async function doRegister() {
+  const name = document.getElementById('rName').value.trim();
+  const u = document.getElementById('rUser').value.trim();
+  const p = document.getElementById('rPass').value;
+  const p2 = document.getElementById('rPass2').value;
+  const err = document.getElementById('rErr'), ok = document.getElementById('rOk');
+  err.textContent = ''; ok.textContent = '';
+  if (!name || !u || !p || !p2) { err.textContent = 'Tüm alanları doldurun.'; return; }
+  if (u.length < 3) { err.textContent = 'Kullanıcı adı en az 3 karakter.'; return; }
+  if (p.length < 4) { err.textContent = 'Şifre en az 4 karakter.'; return; }
+  if (p !== p2) { err.textContent = 'Şifreler eşleşmiyor.'; return; }
+  setBtnLoading('btnRegister', true);
+  const users = await getUsers();
+  if (users[u]) { setBtnLoading('btnRegister', false, 'Kayıt Ol →'); err.textContent = 'Bu kullanıcı adı alınmış.'; return; }
+  users[u] = { name, pass: p };
+  await saveUsers(users);
+  setBtnLoading('btnRegister', false, 'Kayıt Ol →');
+  ok.textContent = '✓ Kayıt başarılı! Giriş yapabilirsiniz.';
+  setTimeout(() => { switchAuthTab('login'); document.getElementById('lUser').value = u; }, 1400);
+}
+
+function doLogout() {
+  clearSession();
+  S.user = null;
+  document.getElementById('authWrap').style.display = 'flex';
+  document.getElementById('appWrap').style.display = 'none';
+  document.getElementById('lUser').value = '';
+  document.getElementById('lPass').value = '';
+  document.getElementById('lErr').textContent = '';
+}
+
+async function showApp() {
+  document.getElementById('authWrap').style.display = 'none';
+  document.getElementById('appWrap').style.display = 'block';
+  const ini = (S.user.fullname || S.user.username).substring(0, 2).toUpperCase();
+  document.getElementById('topAv').textContent = ini;
+  document.getElementById('topUser').textContent = S.user.fullname || S.user.username;
+  showLoading('Veriler yükleniyor...');
+  await loadSharedData();
+  hideLoading();
+  renderAll();
+  renderCalendar();
+  // Auto-refresh every 30s
+  clearInterval(window._autoRefresh);
+  window._autoRefresh = setInterval(autoRefresh, 30000);
+}
+
+async function autoRefresh() {
+  await loadSharedData();
+  renderAll();
+  renderCalendar();
+}
+
+// ── HELPERS ──
+const todayKey = () => {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+};
+function getTotals() {
+  const t = {};
+  S.readers.forEach(r => { t[r] = 0; });
+  Object.values(S.entries).forEach(day => Object.entries(day).forEach(([r, c]) => { t[r] = (t[r] || 0) + c; }));
+  return t;
+}
+const grandTotal = () => Object.values(getTotals()).reduce((a, b) => a + b, 0);
+const todayTotal = () => Object.values(S.entries[todayKey()] || {}).reduce((a, b) => a + b, 0);
+
+// ── RENDER ──
+function renderAll() {
+  const tot = grandTotal(), hat = Math.floor(tot / 41), rem = tot % 41, pct = Math.round(rem / 41 * 100);
+  document.getElementById('stTotal').textContent = tot;
+  document.getElementById('stHatim').textContent = hat;
+  document.getElementById('stToday').textContent = todayTotal();
+  document.getElementById('stRdr').textContent = S.readers.length;
+  document.getElementById('prgPct').textContent = '%' + pct;
+  document.getElementById('prgFill').style.width = pct + '%';
+  document.getElementById('prgText').textContent = rem + ' / 41';
+  renderLeaderboard();
+  renderReaderList();
+}
+
+function renderLeaderboard() {
+  const totals = getTotals();
+  const sorted = [...S.readers].sort((a, b) => (totals[b] || 0) - (totals[a] || 0));
+  const max = sorted.length > 0 ? (totals[sorted[0]] || 1) : 1;
+  const podEl = document.getElementById('lbPodium'), restEl = document.getElementById('lbRest');
+  if (!sorted.length) {
+    podEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:.78rem;padding:.75rem;background:var(--card);border-radius:12px;box-shadow:var(--shadow)">Henüz okuyucu eklenmedi.</div>';
+    restEl.innerHTML = ''; return;
+  }
+  const medals = ['🥇', '🥈', '🥉'], rl = ['1. Sıra', '2. Sıra', '3. Sıra'], pc = ['p1', 'p2', 'p3'];
+  const top3 = sorted.slice(0, Math.min(3, sorted.length));
+  let slots = ['', '', ''];
+  top3.forEach((r, i) => {
+    const cnt = totals[r] || 0, ini = r.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    slots[i] = `<div class="podium-card ${pc[i]}" onclick="openModal('${esc(r)}')">
       <div class="podium-rank">${rl[i]}</div>
       <div class="podium-medal">${medals[i]}</div>
       <div class="podium-av">${ini}</div>
@@ -387,96 +621,253 @@ function renderLeaderboard(){
       <div class="podium-lbl">adet</div>
     </div>`;
   });
-  for(let i=top3.length;i<3;i++)slots[i]=`<div class="podium-card ${pc[i]}" style="opacity:0.3"><div class="podium-medal">${medals[i]}</div><div class="podium-name" style="font-size:0.62rem;color:var(--muted)">—</div><div class="podium-count">0</div><div class="podium-lbl">adet</div></div>`;
-  podEl.innerHTML=slots[1]+slots[0]+slots[2];
-  const rest=sorted.slice(3);
-  restEl.innerHTML=rest.map((r,i)=>{
-    const cnt=totals[r]||0,ini=r.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    return`<div class="lb-row" onclick="openModal('${r.replace(/'/g,"\\'")}')">
-      <div class="lb-pos">${i+4}.</div>
+  for (let i = top3.length; i < 3; i++)
+    slots[i] = `<div class="podium-card ${pc[i]}" style="opacity:.3"><div class="podium-medal">${medals[i]}</div><div class="podium-name" style="font-size:.62rem;color:var(--muted)">—</div><div class="podium-count">0</div><div class="podium-lbl">adet</div></div>`;
+  podEl.innerHTML = slots[1] + slots[0] + slots[2];
+  const rest = sorted.slice(3);
+  restEl.innerHTML = rest.map((r, i) => {
+    const cnt = totals[r] || 0, ini = r.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    return `<div class="lb-row" onclick="openModal('${esc(r)}')">
+      <div class="lb-pos">${i + 4}.</div>
       <div class="lb-av">${ini}</div>
-      <div class="lb-info"><div class="lb-name">${r}</div><div class="lb-bar"><div class="lb-barfill" style="width:${Math.round(cnt/max*100)}%"></div></div></div>
+      <div class="lb-info"><div class="lb-name">${r}</div><div class="lb-bar"><div class="lb-barfill" style="width:${Math.round(cnt / max * 100)}%"></div></div></div>
       <div class="lb-cnt">${cnt}</div>
     </div>`;
   }).join('');
 }
 
-function renderReaderList(){
-  const totals=getTotals(),el=document.getElementById('rdrList');
-  if(!S.readers.length){el.innerHTML='<div style="color:var(--muted);font-size:0.78rem;text-align:center;padding:0.5rem">Henüz kimse eklenmedi.</div>';return;}
-  const me=(S.user.fullname||S.user.username).toLowerCase();
-  const sorted=[...S.readers].sort((a,b)=>(totals[b]||0)-(totals[a]||0));
-  el.innerHTML=sorted.map((r,i)=>{
-    const ini=r.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    const isMine=r.toLowerCase()===me;
-    const cnt=totals[r]||0,td=(S.entries[todayKey()]||{})[r]||0;
-    return`<div class="rdr-item ${isMine?'mine':''}" onclick="openModal('${r.replace(/'/g,"\\'")}')">
-      <div class="rdr-av" style="${isMine?'background:var(--g2);color:#fff':''}">${ini}</div>
-      <div class="rdr-item-info">
-        <div class="rdr-item-name">${i+1}. ${r}${isMine?' 👈':''}</div>
+function renderReaderList() {
+  const totals = getTotals(), el = document.getElementById('rdrList');
+  if (!S.readers.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.78rem;text-align:center;padding:.5rem">Henüz kimse eklenmedi.</div>'; return; }
+  const me = (S.user.fullname || S.user.username).toLowerCase();
+  const sorted = [...S.readers].sort((a, b) => (totals[b] || 0) - (totals[a] || 0));
+  el.innerHTML = sorted.map((r, i) => {
+    const ini = r.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+    const isMine = r.toLowerCase() === me;
+    const cnt = totals[r] || 0, td = (S.entries[todayKey()] || {})[r] || 0;
+    return `<div class="rdr-item ${isMine ? 'mine' : ''}">
+      <div class="rdr-av" style="${isMine ? 'background:var(--g2);color:#fff' : ''}">${ini}</div>
+      <div class="rdr-item-info" onclick="openModal('${esc(r)}')">
+        <div class="rdr-item-name">${i + 1}. ${r}${isMine ? ' 👈' : ''}</div>
         <div class="rdr-item-total">Toplam: ${cnt} · Bugün: ${td} adet</div>
       </div>
-      <span class="chip ${isMine?'mine':''}">Giriş</span>
+      <div class="chip-row">
+        <button class="chip ${isMine ? 'mine' : ''}" onclick="openModal('${esc(r)}')">Giriş</button>
+        <button class="chip edit" onclick="openEditRdrModal('${esc(r)}')">✏️</button>
+        <button class="chip del" onclick="confirmDeleteReader('${esc(r)}')">🗑️</button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function addReader(){
-  const inp=document.getElementById('newRdrName'),n=inp.value.trim();
-  if(!n)return;
-  if(S.readers.includes(n)){alert('Bu isim zaten var.');return;}
-  S.readers.push(n);saveData();inp.value='';renderAll();
+// escape for html attr
+function esc(s) { return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;'); }
+
+// ── ADD READER ──
+async function addReader() {
+  const inp = document.getElementById('newRdrName'), n = inp.value.trim();
+  if (!n) return;
+  if (S.readers.includes(n)) { showToast('Bu isim zaten var.'); return; }
+  S.readers.push(n);
+  inp.value = '';
+  renderAll();
+  await saveSharedData();
 }
 
-function openModal(name){
-  S.selRdr=name;
-  document.getElementById('mRdr').textContent=name;
-  document.getElementById('mDate').textContent=new Date().toLocaleDateString('tr-TR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('cntInp').value=1;
-  document.getElementById('mTotal').textContent=getTotals()[name]||0;
+// ── ENTRY MODAL ──
+function openModal(name) {
+  S.selRdr = name;
+  document.getElementById('mRdr').textContent = name;
+  document.getElementById('mDate').textContent = new Date().toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('cntInp').value = 1;
+  document.getElementById('mTotal').textContent = getTotals()[name] || 0;
   document.getElementById('overlay').classList.add('open');
-  setTimeout(()=>document.getElementById('cntInp').focus(),200);
+  setTimeout(() => document.getElementById('cntInp').focus(), 200);
 }
-const closeModal=()=>{document.getElementById('overlay').classList.remove('open');S.selRdr=null;};
-const adjCount=d=>{const i=document.getElementById('cntInp');i.value=Math.max(1,(parseInt(i.value)||1)+d);};
-function saveEntry(){
-  const c=parseInt(document.getElementById('cntInp').value);
-  if(!c||c<1){alert('Geçerli adet girin.');return;}
-  const k=todayKey();
-  if(!S.entries[k])S.entries[k]={};
-  S.entries[k][S.selRdr]=(S.entries[k][S.selRdr]||0)+c;
-  saveData();closeModal();renderAll();
-  const tot=grandTotal();
-  if(tot%41===0&&tot>0)setTimeout(()=>alert('🎉 '+Math.floor(tot/41)+'. hatim tamamlandı! Hayırlı olsun.'),200);
+function closeModal() { document.getElementById('overlay').classList.remove('open'); S.selRdr = null; }
+function adjCount(d) { const i = document.getElementById('cntInp'); i.value = Math.max(1, (parseInt(i.value) || 1) + d); }
+
+async function saveEntry() {
+  const c = parseInt(document.getElementById('cntInp').value);
+  if (!c || c < 1) { showToast('Geçerli adet girin.'); return; }
+  const k = todayKey();
+  if (!S.entries[k]) S.entries[k] = {};
+  S.entries[k][S.selRdr] = (S.entries[k][S.selRdr] || 0) + c;
+  closeModal();
+  renderAll();
+  renderCalendar();
+  await saveSharedData();
+  const tot = grandTotal();
+  if (tot % 41 === 0 && tot > 0) setTimeout(() => alert('🎉 ' + Math.floor(tot / 41) + '. hatim tamamlandı! Hayırlı olsun.'), 200);
+  showToast('✓ Kaydedildi');
 }
 
-function renderCalendar(){
-  const ms=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  document.getElementById('calTitle').textContent=ms[S.calM]+' '+S.calY;
-  const today=new Date();today.setHours(0,0,0,0);
-  const fd=new Date(S.calY,S.calM,1).getDay(),off=fd===0?6:fd-1;
-  const dim=new Date(S.calY,S.calM+1,0).getDate();
-  let h=['Pt','Sa','Ça','Pe','Cu','Ct','Pz'].map(d=>`<div class="cal-dl">${d}</div>`).join('');
-  for(let i=0;i<off;i++)h+='<div class="cal-d empty"></div>';
-  for(let d=1;d<=dim;d++){
-    const k=S.calY+'-'+String(S.calM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    const tot=Object.values(S.entries[k]||{}).reduce((a,b)=>a+b,0);
-    const isT=new Date(S.calY,S.calM,d).getTime()===today.getTime();
-    h+=`<div class="cal-d ${isT?'today':''}" onclick="showDay('${k}',${d})"><span class="dnum">${d}</span>${tot>0?`<span class="dcnt">${tot}</span>`:''}</div>`;
+// ── EDIT DAY ENTRIES MODAL ──
+function openEditDayModal(dateKey) {
+  S.editDateKey = dateKey;
+  const dd = S.entries[dateKey] || {};
+  const [y, m, d] = dateKey.split('-');
+  const ms = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('editDateLabel').textContent = parseInt(d) + ' ' + ms[parseInt(m) - 1] + ' ' + y + ' tarihli kayıtlar';
+  const list = document.getElementById('editEntryList');
+  if (!Object.keys(dd).length) { list.innerHTML = '<div style="color:var(--muted);font-size:.78rem;text-align:center">Bu gün kayıt yok.</div>'; }
+  else {
+    list.innerHTML = Object.entries(dd).map(([r, c]) =>
+      `<div class="edit-entry-row">
+        <span class="edit-entry-name">${r}</span>
+        <input class="edit-entry-inp" type="number" min="0" value="${c}" data-reader="${esc(r)}" inputmode="numeric">
+        <button class="edit-entry-del" onclick="removeEditEntry('${esc(r)}')">✕</button>
+      </div>`
+    ).join('');
   }
-  document.getElementById('calGrid').innerHTML=h;
+  document.getElementById('editOverlay').classList.add('open');
 }
-function showDay(k,d){
-  const dd=S.entries[k]||{},el=document.getElementById('calDetail');
-  if(!Object.keys(dd).length){el.style.display='none';return;}
-  const tot=Object.values(dd).reduce((a,b)=>a+b,0);
-  const ms=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
-  el.innerHTML=`<div class="cal-detail-box"><h4>${d} ${ms[S.calM]} ${S.calY} — Toplam: ${tot} adet</h4>${Object.entries(dd).map(([r,c])=>`<div class="cal-dr"><span>${r}</span><strong>${c} adet</strong></div>`).join('')}</div>`;
-  el.style.display='block';
-}
-function changeMonth(dir){S.calM+=dir;if(S.calM<0){S.calM=11;S.calY--;}if(S.calM>11){S.calM=0;S.calY++;}renderCalendar();document.getElementById('calDetail').style.display='none';}
+function closeEditModal() { document.getElementById('editOverlay').classList.remove('open'); S.editDateKey = null; }
 
-document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('authWrap').style.display!=='none')doLogin();if(e.key==='Escape')closeModal();});
-(function(){const u=ss('vHUser');if(u){try{S.user=JSON.parse(u);showApp();}catch(e){}}})();
+function removeEditEntry(reader) {
+  const row = document.querySelector(`.edit-entry-inp[data-reader="${CSS.escape(reader)}"]`);
+  if (row) row.closest('.edit-entry-row').remove();
+}
+
+async function saveEditEntries() {
+  const inputs = document.querySelectorAll('.edit-entry-inp');
+  const newEntries = {};
+  inputs.forEach(inp => {
+    const v = parseInt(inp.value);
+    if (v > 0) newEntries[inp.dataset.reader] = v;
+  });
+  if (Object.keys(newEntries).length === 0) {
+    delete S.entries[S.editDateKey];
+  } else {
+    S.entries[S.editDateKey] = newEntries;
+  }
+  closeEditModal();
+  renderAll();
+  renderCalendar();
+  await saveSharedData();
+  showToast('✓ Düzenleme kaydedildi');
+}
+
+// ── EDIT READER NAME ──
+function openEditRdrModal(name) {
+  S.editRdrOld = name;
+  document.getElementById('editRdrInp').value = name;
+  document.getElementById('editRdrErr').textContent = '';
+  document.getElementById('editRdrOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('editRdrInp').focus(), 200);
+}
+function closeEditRdrModal() { document.getElementById('editRdrOverlay').classList.remove('open'); S.editRdrOld = null; }
+
+async function saveEditReader() {
+  const newName = document.getElementById('editRdrInp').value.trim();
+  const err = document.getElementById('editRdrErr');
+  if (!newName) { err.textContent = 'İsim boş bırakılamaz.'; return; }
+  if (newName === S.editRdrOld) { closeEditRdrModal(); return; }
+  if (S.readers.includes(newName)) { err.textContent = 'Bu isim zaten var.'; return; }
+  const old = S.editRdrOld;
+  // rename in readers array
+  const idx = S.readers.indexOf(old);
+  if (idx > -1) S.readers[idx] = newName;
+  // rename in all entries
+  Object.keys(S.entries).forEach(dk => {
+    if (S.entries[dk][old] !== undefined) {
+      S.entries[dk][newName] = S.entries[dk][old];
+      delete S.entries[dk][old];
+    }
+  });
+  closeEditRdrModal();
+  renderAll();
+  renderCalendar();
+  await saveSharedData();
+  showToast('✓ İsim güncellendi');
+}
+
+// ── DELETE READER ──
+function confirmDeleteReader(name) {
+  S.pendingConfirm = { type: 'deleteReader', name };
+  document.getElementById('confirmTitle').textContent = 'Okuyucu Silinsin mi?';
+  document.getElementById('confirmMsg').textContent = `"${name}" isimli okuyucu ve tüm kayıtları silinecek. Bu işlem geri alınamaz.`;
+  document.getElementById('confirmOkBtn').onclick = execDeleteReader;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+async function execDeleteReader() {
+  const name = S.pendingConfirm.name;
+  S.readers = S.readers.filter(r => r !== name);
+  Object.keys(S.entries).forEach(dk => { delete S.entries[dk][name]; if (!Object.keys(S.entries[dk]).length) delete S.entries[dk]; });
+  closeConfirm();
+  renderAll();
+  renderCalendar();
+  await saveSharedData();
+  showToast('🗑️ Okuyucu silindi');
+}
+
+// ── CONFIRM MODAL ──
+function closeConfirm() { document.getElementById('confirmOverlay').classList.remove('open'); S.pendingConfirm = null; }
+
+// ── CALENDAR ──
+function renderCalendar() {
+  const ms = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('calTitle').textContent = ms[S.calM] + ' ' + S.calY;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const fd = new Date(S.calY, S.calM, 1).getDay(), off = fd === 0 ? 6 : fd - 1;
+  const dim = new Date(S.calY, S.calM + 1, 0).getDate();
+  let h = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'].map(d => `<div class="cal-dl">${d}</div>`).join('');
+  for (let i = 0; i < off; i++) h += '<div class="cal-d empty"></div>';
+  for (let d = 1; d <= dim; d++) {
+    const k = S.calY + '-' + String(S.calM + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    const tot = Object.values(S.entries[k] || {}).reduce((a, b) => a + b, 0);
+    const isT = new Date(S.calY, S.calM, d).getTime() === today.getTime();
+    h += `<div class="cal-d ${isT ? 'today' : ''}" onclick="showDay('${k}',${d})">
+      <span class="dnum">${d}</span>
+      ${tot > 0 ? `<span class="dcnt">${tot}</span>` : ''}
+    </div>`;
+  }
+  document.getElementById('calGrid').innerHTML = h;
+}
+
+function showDay(k, d) {
+  const dd = S.entries[k] || {}, el = document.getElementById('calDetail');
+  if (!Object.keys(dd).length) { el.style.display = 'none'; return; }
+  const tot = Object.values(dd).reduce((a, b) => a + b, 0);
+  const ms = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  el.innerHTML = `<div class="cal-detail-box">
+    <h4>${d} ${ms[S.calM]} ${S.calY} — Toplam: ${tot} adet
+      <button style="float:right;background:#e6f4ee;border:none;border-radius:7px;padding:.2rem .55rem;font-size:.68rem;font-weight:700;color:var(--g1);cursor:pointer" onclick="openEditDayModal('${k}')">✏️ Düzenle</button>
+    </h4>
+    ${Object.entries(dd).map(([r, c]) =>
+      `<div class="cal-dr"><span>${r}</span><strong>${c} adet</strong></div>`
+    ).join('')}
+  </div>`;
+  el.style.display = 'block';
+}
+
+function changeMonth(dir) {
+  S.calM += dir;
+  if (S.calM < 0) { S.calM = 11; S.calY--; }
+  if (S.calM > 11) { S.calM = 0; S.calY++; }
+  renderCalendar();
+  document.getElementById('calDetail').style.display = 'none';
+}
+
+// ── EVENT LISTENERS ──
+document.getElementById('overlay').addEventListener('click', e => { if (e.target === document.getElementById('overlay')) closeModal(); });
+document.getElementById('editOverlay').addEventListener('click', e => { if (e.target === document.getElementById('editOverlay')) closeEditModal(); });
+document.getElementById('editRdrOverlay').addEventListener('click', e => { if (e.target === document.getElementById('editRdrOverlay')) closeEditRdrModal(); });
+document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === document.getElementById('confirmOverlay')) closeConfirm(); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('authWrap').style.display !== 'none') doLogin();
+  if (e.key === 'Escape') { closeModal(); closeEditModal(); closeEditRdrModal(); closeConfirm(); }
+});
+
+// Enter on add reader input
+document.getElementById('newRdrName').addEventListener('keydown', e => { if (e.key === 'Enter') addReader(); });
+
+// ── AUTO-LOGIN FROM SESSION ──
+(async function init() {
+  const sess = getSession();
+  if (sess) { S.user = sess; await showApp(); }
+})();
 </script>
+</body>
+</html>
