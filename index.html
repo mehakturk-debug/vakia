@@ -1,0 +1,580 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-light:#E1F5EE;--green-dark:#085041;
+  --gold:#BA7517;--gold-light:#FAEEDA;--gold-mid:#EF9F27;
+  --bg:#f8f6f0;--card:#fff;--text:#2C2C2A;--muted:#888780;
+  --border:#D3D1C7;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.screen{display:none;min-height:100vh}
+.screen.active{display:block}
+
+/* LOGIN */
+#loginScreen{background:linear-gradient(160deg,#085041 0%,#1D9E75 60%,#EF9F27 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:rgba(255,255,255,0.97);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:0 8px 40px rgba(0,0,0,0.18)}
+.login-logo{text-align:center;margin-bottom:1.5rem}
+.login-logo .arabic{font-family:'Amiri',serif;font-size:2rem;color:var(--green-dark);line-height:1.4}
+.login-logo h2{font-size:1.1rem;color:var(--green-dark);margin-top:0.3rem;font-weight:600}
+.login-logo p{font-size:0.8rem;color:var(--muted);margin-top:0.2rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:0.82rem;font-weight:600;color:var(--green-dark);margin-bottom:0.4rem}
+.form-group input{width:100%;padding:0.7rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:'Nunito',sans-serif;outline:none;transition:border 0.2s}
+.form-group input:focus{border-color:var(--green)}
+.btn-primary{width:100%;padding:0.8rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:background 0.2s;font-family:'Nunito',sans-serif}
+.btn-primary:hover{background:var(--green-dark)}
+.login-note{text-align:center;font-size:0.78rem;color:var(--muted);margin-top:1rem}
+.error-msg{color:#E24B4A;font-size:0.82rem;margin-top:0.5rem;text-align:center;min-height:1.2em}
+.divider{border:none;border-top:1px solid var(--border);margin:1rem 0}
+
+/* APP SHELL */
+#appScreen{background:var(--bg)}
+.top-bar{background:var(--green-dark);color:#fff;padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.top-bar .logo-small{font-family:'Amiri',serif;font-size:1.2rem}
+.top-bar .user-info{font-size:0.8rem;opacity:0.85}
+.top-bar .logout-btn{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:0.3rem 0.8rem;border-radius:6px;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif}
+.nav-tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;position:sticky;top:52px;z-index:99}
+.nav-tab{flex:1;min-width:80px;padding:0.75rem 0.5rem;text-align:center;font-size:0.78rem;font-weight:600;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:'Nunito',sans-serif}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-content{display:none;padding:1rem}
+.tab-content.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);margin-bottom:1rem}
+.card h3{font-size:1rem;font-weight:700;color:var(--green-dark);margin-bottom:0.75rem;display:flex;align-items:center;gap:0.5rem}
+.section-icon{font-size:1.1rem}
+
+/* DASHBOARD */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.75rem;margin-bottom:1rem}
+.stat-card{background:var(--card);border-radius:10px;padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.stat-card .stat-val{font-size:1.6rem;font-weight:700;color:var(--green)}
+.stat-card .stat-lbl{font-size:0.72rem;color:var(--muted);margin-top:0.2rem;font-weight:600}
+.stat-card.gold .stat-val{color:var(--gold)}
+
+.reader-row{display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.reader-row:last-child{border-bottom:none}
+.reader-name{font-weight:600;font-size:0.9rem}
+.reader-count{font-size:0.85rem;color:var(--green);font-weight:700}
+.reader-avatar{width:32px;height:32px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;color:var(--green-dark);flex-shrink:0}
+
+/* PROGRESS BAR */
+.progress-bar{height:8px;background:var(--green-light);border-radius:99px;overflow:hidden;margin-top:0.4rem}
+.progress-fill{height:100%;background:var(--green);border-radius:99px;transition:width 0.5s}
+
+/* OKUYUCU */
+.reader-list{display:flex;flex-direction:column;gap:0.5rem}
+.reader-item{background:var(--card);border-radius:10px;padding:0.9rem 1rem;display:flex;align-items:center;gap:0.75rem;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.15s,box-shadow 0.15s;border:2px solid transparent}
+.reader-item:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,0.12)}
+.reader-item.mine{border-color:var(--green)}
+.reader-item-info{flex:1}
+.reader-item-name{font-weight:700;font-size:0.95rem}
+.reader-item-total{font-size:0.78rem;color:var(--muted);margin-top:0.1rem}
+.reader-item-badge{background:var(--green-light);color:var(--green-dark);font-size:0.72rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:99px}
+.add-reader-row{display:flex;gap:0.5rem;margin-top:0.75rem}
+.add-reader-row input{flex:1;padding:0.65rem 0.9rem;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;font-family:'Nunito',sans-serif;outline:none}
+.add-reader-row input:focus{border-color:var(--green)}
+.btn-sm{padding:0.65rem 1rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap}
+.btn-sm:hover{background:var(--green-dark)}
+
+/* GİRİŞ MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:1.5rem;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,0.2)}
+.modal h3{font-size:1.05rem;font-weight:700;color:var(--green-dark);margin-bottom:1rem}
+.modal-reader-name{font-family:'Amiri',serif;font-size:1.2rem;text-align:center;color:var(--green-dark);margin-bottom:1rem}
+.count-input-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem}
+.count-input-row label{font-size:0.82rem;font-weight:600;color:var(--muted);min-width:90px}
+.count-input-row input{width:80px;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;font-family:'Nunito',sans-serif;outline:none}
+.count-input-row input:focus{border-color:var(--green)}
+.modal-actions{display:flex;gap:0.5rem;margin-top:1rem}
+.btn-cancel{flex:1;padding:0.7rem;background:var(--border);color:var(--text);border:none;border-radius:8px;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:'Nunito',sans-serif}
+.btn-save{flex:2;padding:0.7rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif}
+.today-badge{background:var(--gold-light);color:var(--gold);font-size:0.75rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:99px;display:inline-block;margin-bottom:0.5rem}
+
+/* TAKVİM */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
+.cal-nav{background:none;border:1.5px solid var(--border);color:var(--text);padding:0.3rem 0.7rem;border-radius:8px;cursor:pointer;font-size:0.9rem;font-family:'Nunito',sans-serif}
+.cal-title{font-weight:700;font-size:0.95rem;color:var(--green-dark)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day-label{text-align:center;font-size:0.68rem;font-weight:700;color:var(--muted);padding:0.2rem 0}
+.cal-day{text-align:center;padding:0.4rem 0.2rem;border-radius:8px;font-size:0.78rem;cursor:pointer;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px}
+.cal-day.empty{pointer-events:none}
+.cal-day.today{background:var(--green-light);font-weight:700}
+.cal-day.has-data{background:#fff;border:1.5px solid var(--green-light)}
+.cal-day .day-num{font-weight:600;font-size:0.8rem}
+.cal-day .day-count{font-size:0.65rem;color:var(--green);font-weight:700;background:var(--green-light);border-radius:4px;padding:0 3px;line-height:1.5}
+.cal-detail{margin-top:1rem;padding:0.75rem;background:var(--green-light);border-radius:10px;font-size:0.85rem}
+.cal-detail h4{font-weight:700;color:var(--green-dark);margin-bottom:0.5rem}
+.cal-detail-row{display:flex;justify-content:space-between;padding:0.25rem 0;border-bottom:1px solid rgba(29,158,117,0.15);font-size:0.82rem}
+.cal-detail-row:last-child{border-bottom:none}
+
+/* USUL TAB */
+.usul-card{background:var(--gold-light);border-radius:12px;padding:1.2rem;margin-bottom:1rem;border-left:4px solid var(--gold-mid)}
+.usul-card h4{font-weight:700;color:var(--gold);margin-bottom:0.5rem;font-size:0.9rem}
+.usul-step{display:flex;gap:0.6rem;align-items:flex-start;padding:0.35rem 0;border-bottom:1px solid rgba(186,117,23,0.15);font-size:0.85rem}
+.usul-step:last-child{border-bottom:none}
+.step-num{min-width:22px;height:22px;background:var(--gold-mid);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;margin-top:1px}
+.arabic-text{font-family:'Amiri',serif;font-size:1.1rem;color:var(--green-dark);text-align:center;padding:0.5rem;line-height:1.8}
+.info-box{background:var(--green-light);border-radius:10px;padding:1rem;font-size:0.83rem;line-height:1.7;color:var(--green-dark);border-left:4px solid var(--green)}
+.quote-box{background:#fff;border-radius:10px;padding:1rem;font-size:0.82rem;line-height:1.7;border-left:4px solid var(--gold-mid);margin-top:0.75rem;font-style:italic;color:#444}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="arabic">سُورَةُ الْوَاقِعَة</div>
+      <h2>Vakıa Hatim Takip Sistemi</h2>
+      <p>Bereketle oku, birlikte tamamla</p>
+    </div>
+    <div class="form-group">
+      <label>Kullanıcı Adı</label>
+      <input type="text" id="loginUser" placeholder="kullanıcı adınız" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>Şifre</label>
+      <input type="password" id="loginPass" placeholder="şifreniz" autocomplete="current-password">
+    </div>
+    <div class="error-msg" id="loginError"></div>
+    <button class="btn-primary" onclick="doLogin()">Giriş Yap</button>
+    <hr class="divider">
+    <div class="login-note">
+      🔒 Sisteme bir kez giriş yapmanız yeterlidir.<br>
+      Yeni hesap için yönetici ile iletişime geçin.
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="appScreen" class="screen">
+  <div class="top-bar">
+    <div class="logo-small">☽ Vakıa Hatim</div>
+    <div style="display:flex;align-items:center;gap:0.75rem">
+      <span class="user-info" id="topBarUser"></span>
+      <button class="logout-btn" onclick="doLogout()">Çıkış</button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('okuyucu')">👥 Okuyucular</button>
+    <button class="nav-tab" onclick="switchTab('takvim')">📅 Takvim</button>
+    <button class="nav-tab" onclick="switchTab('usul')">📖 Okuma Usulü</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="tab-dashboard" class="tab-content active">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">0</div>
+        <div class="stat-lbl">Toplam Okunan</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-val" id="statHatim">0</div>
+        <div class="stat-lbl">Tamamlanan Hatim</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statToday">0</div>
+        <div class="stat-lbl">Bugün Okunan</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-val" id="statReaders">0</div>
+        <div class="stat-lbl">Aktif Okuyucu</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="section-icon">🎯</span> Hatim İlerlemesi (41 adet)</h3>
+      <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--muted);margin-bottom:0.3rem">
+        <span id="progressText">0 / 41</span>
+        <span id="progressPct">%0</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="section-icon">👥</span> Okuyucu Bazlı Durum</h3>
+      <div id="dashReaderList"></div>
+    </div>
+  </div>
+
+  <!-- OKUYUCU TAB -->
+  <div id="tab-okuyucu" class="tab-content">
+    <div class="card">
+      <h3><span class="section-icon">➕</span> Okuyucu Ekle</h3>
+      <div class="add-reader-row">
+        <input type="text" id="newReaderName" placeholder="Ad Soyad girin...">
+        <button class="btn-sm" onclick="addReader()">Ekle</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="section-icon">📿</span> Okuyucular — Adınıza tıklayarak okuma girin</h3>
+      <div class="reader-list" id="readerList"></div>
+    </div>
+  </div>
+
+  <!-- TAKVİM TAB -->
+  <div id="tab-takvim" class="tab-content">
+    <div class="card">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+        <span class="cal-title" id="calTitle"></span>
+        <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="card" id="calDetailCard" style="display:none">
+      <div id="calDetail"></div>
+    </div>
+  </div>
+
+  <!-- USUL TAB -->
+  <div id="tab-usul" class="tab-content">
+    <div class="arabic-text">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+
+    <div class="card">
+      <h3><span class="section-icon">📜</span> Vakıa Suresi Hakkında</h3>
+      <div class="info-box">
+        Sûre-i Vakıa-i Şerife'nin tam hatmi <strong>41 adet</strong> okunmaktır.
+        Maddi sıkıntı halinde bir oturuşta <strong>3 defa</strong> okunur.
+        İhtiyaç daha fazla ise <strong>7 defa</strong> okunmalıdır.
+        İhtiyaç çok şiddetli ise <strong>41 defa</strong> okumak üzere birkaç kişi ile
+        veya 3 ya da 7 defa okumaya devam etmelidir.
+      </div>
+      <div class="quote-box">
+        "1000 defa okusunlar bakalım, eğer zengin olmazlarsa bana gelsinler.
+        Bankadan kredi alıyorlar, onun yerine bu sureyi okusalar."
+        <div style="text-align:right;margin-top:0.5rem;font-size:0.78rem;color:var(--muted)">— Merhum Ahmet Bey Ağabey</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="section-icon">📋</span> Okuma Usulü — Sırası ile</h3>
+      <div class="usul-card">
+        <h4>🌟 Okuma Başlangıcı</h4>
+        <div class="usul-step"><span class="step-num">1</span><span>1 adet <strong>Fâtiha-i Şerife</strong></span></div>
+        <div class="usul-step"><span class="step-num">2</span><span>3 adet <strong>İhlâs-ı Şerif</strong></span></div>
+        <div class="usul-step"><span class="step-num">3</span><span>7 adet <strong>İstiğfâr-ı Şerif</strong> (11 adet de olabilir)</span></div>
+        <div class="usul-step"><span class="step-num">4</span><span>7 adet <strong>Salâvat-ı Şerife</strong> (11 adet de olabilir)</span></div>
+      </div>
+      <div class="usul-card">
+        <h4>📖 Sure Okunuşu</h4>
+        <div class="usul-step"><span class="step-num">5</span><span><strong>Fâtiha-i Şerife</strong></span></div>
+        <div class="usul-step"><span class="step-num">6</span><span><strong>Sûre-i Vakıa</strong> okunur</span></div>
+        <div class="usul-step"><span class="step-num">7</span><span><strong>Fâtiha-i Şerife</strong></span></div>
+      </div>
+      <div class="usul-card">
+        <h4>🤲 Bitiş ve Dua</h4>
+        <div class="usul-step"><span class="step-num">8</span><span>7 adet <strong>Salâvat-ı Şerife</strong> (11 adet de olabilir)</span></div>
+        <div class="usul-step"><span class="step-num">9</span><span><strong>Sûre-i Vakıa Duası</strong> okunur</span></div>
+      </div>
+      <div class="info-box" style="margin-top:0.75rem">
+        💡 <strong>Toplulukla Okuma:</strong> Bu sistem birden fazla kişinin birlikte hatim yapması için tasarlanmıştır.
+        Her okuyucu kendi okuduğu adetleri girer, toplam otomatik hesaplanır.
+        41 adete ulaşıldığında bir hatim tamamlanmış olur.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GİRİŞ MODAL -->
+<div class="modal-overlay" id="entryModal">
+  <div class="modal">
+    <h3>📿 Okuma Girişi</h3>
+    <div class="modal-reader-name" id="modalReaderName"></div>
+    <div class="today-badge" id="modalDate"></div>
+    <div class="count-input-row" style="margin-top:0.75rem">
+      <label>Bugün okunan:</label>
+      <input type="number" id="entryCount" min="1" max="1000" value="1" placeholder="adet">
+    </div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-top:0.25rem">
+      Toplam katkınız: <strong id="myTotalSoFar"></strong> adet
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">İptal</button>
+      <button class="btn-save" onclick="saveEntry()">Kaydet ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const USERS = {
+  "admin": "vakia2024",
+  "okuyucu1": "hatim1",
+  "okuyucu2": "hatim2",
+  "okuyucu3": "hatim3",
+  "misafir": "1234"
+};
+
+let state = {
+  currentUser: null,
+  readers: [],
+  entries: {},
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+  selectedReader: null
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('vakiaHatim');
+    if (s) {
+      const parsed = JSON.parse(s);
+      state.readers = parsed.readers || [];
+      state.entries = parsed.entries || {};
+    }
+  } catch(e) {}
+  const u = sessionStorage.getItem('vakiaUser');
+  if (u) { state.currentUser = u; showApp(); }
+}
+
+function saveData() {
+  localStorage.setItem('vakiaHatim', JSON.stringify({
+    readers: state.readers, entries: state.entries
+  }));
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  if (!u || !p) { err.textContent = 'Kullanıcı adı ve şifre giriniz.'; return; }
+  if (USERS[u] && USERS[u] === p) {
+    state.currentUser = u;
+    sessionStorage.setItem('vakiaUser', u);
+    err.textContent = '';
+    showApp();
+  } else {
+    err.textContent = 'Kullanıcı adı veya şifre hatalı.';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('vakiaUser');
+  state.currentUser = null;
+  document.getElementById('loginScreen').classList.add('active');
+  document.getElementById('appScreen').classList.remove('active');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+function showApp() {
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('appScreen').classList.add('active');
+  document.getElementById('topBarUser').textContent = '👤 ' + state.currentUser;
+  renderAll();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  const tabs = ['dashboard','okuyucu','takvim','usul'];
+  document.querySelectorAll('.nav-tab')[tabs.indexOf(tab)].classList.add('active');
+  if (tab === 'takvim') renderCalendar();
+}
+
+function getTotalByReader() {
+  const totals = {};
+  state.readers.forEach(r => { totals[r] = 0; });
+  Object.values(state.entries).forEach(dayData => {
+    Object.entries(dayData).forEach(([reader, count]) => {
+      totals[reader] = (totals[reader] || 0) + count;
+    });
+  });
+  return totals;
+}
+
+function getGrandTotal() {
+  return Object.values(getTotalByReader()).reduce((a,b) => a+b, 0);
+}
+
+function getTodayTotal() {
+  const today = todayKey();
+  if (!state.entries[today]) return 0;
+  return Object.values(state.entries[today]).reduce((a,b) => a+b, 0);
+}
+
+function todayKey() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function renderAll() {
+  renderDashboard();
+  renderReaderList();
+}
+
+function renderDashboard() {
+  const total = getGrandTotal();
+  const hatim = Math.floor(total / 41);
+  const today = getTodayTotal();
+  const pct = Math.min(100, Math.round(((total % 41) / 41) * 100));
+  const remaining = total % 41;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statHatim').textContent = hatim;
+  document.getElementById('statToday').textContent = today;
+  document.getElementById('statReaders').textContent = state.readers.length;
+  document.getElementById('progressText').textContent = remaining + ' / 41';
+  document.getElementById('progressPct').textContent = '%' + pct;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const totals = getTotalByReader();
+  const el = document.getElementById('dashReaderList');
+  if (state.readers.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:1rem">Henüz okuyucu eklenmedi.</div>';
+    return;
+  }
+  const sorted = [...state.readers].sort((a,b) => (totals[b]||0) - (totals[a]||0));
+  el.innerHTML = sorted.map(r => {
+    const cnt = totals[r] || 0;
+    const initials = r.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const todayData = state.entries[todayKey()] || {};
+    const todayCnt = todayData[r] || 0;
+    return `<div class="reader-row">
+      <div style="display:flex;align-items:center;gap:0.6rem">
+        <div class="reader-avatar">${initials}</div>
+        <div>
+          <div class="reader-name">${r}</div>
+          <div style="font-size:0.72rem;color:var(--muted)">Bugün: ${todayCnt} adet</div>
+        </div>
+      </div>
+      <div class="reader-count">${cnt} adet</div>
+    </div>`;
+  }).join('');
+}
+
+function renderReaderList() {
+  const totals = getTotalByReader();
+  const el = document.getElementById('readerList');
+  if (state.readers.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;text-align:center;padding:1rem">Henüz okuyucu eklenmedi. Yukarıdan ekleyebilirsiniz.</div>';
+    return;
+  }
+  el.innerHTML = state.readers.map(r => {
+    const cnt = totals[r] || 0;
+    const initials = r.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const isMine = r.toLowerCase() === state.currentUser.toLowerCase();
+    return `<div class="reader-item ${isMine ? 'mine' : ''}" onclick="openModal('${r.replace(/'/g,"\\'")}')">
+      <div class="reader-avatar">${initials}</div>
+      <div class="reader-item-info">
+        <div class="reader-item-name">${r} ${isMine ? '👈 (siz)' : ''}</div>
+        <div class="reader-item-total">Toplam: ${cnt} adet okudu</div>
+      </div>
+      <div class="reader-item-badge">Giriş Yap</div>
+    </div>`;
+  }).join('');
+}
+
+function addReader() {
+  const inp = document.getElementById('newReaderName');
+  const name = inp.value.trim();
+  if (!name) return;
+  if (state.readers.includes(name)) { alert('Bu okuyucu zaten var.'); return; }
+  state.readers.push(name);
+  saveData();
+  inp.value = '';
+  renderAll();
+}
+
+function openModal(readerName) {
+  state.selectedReader = readerName;
+  document.getElementById('modalReaderName').textContent = readerName;
+  const d = new Date();
+  document.getElementById('modalDate').textContent = d.toLocaleDateString('tr-TR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('entryCount').value = 1;
+  const totals = getTotalByReader();
+  document.getElementById('myTotalSoFar').textContent = (totals[readerName] || 0);
+  document.getElementById('entryModal').classList.add('open');
+  setTimeout(() => document.getElementById('entryCount').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('entryModal').classList.remove('open');
+  state.selectedReader = null;
+}
+
+function saveEntry() {
+  const cnt = parseInt(document.getElementById('entryCount').value);
+  if (!cnt || cnt < 1) { alert('Geçerli bir adet giriniz.'); return; }
+  const key = todayKey();
+  if (!state.entries[key]) state.entries[key] = {};
+  state.entries[key][state.selectedReader] = (state.entries[key][state.selectedReader] || 0) + cnt;
+  saveData();
+  closeModal();
+  renderAll();
+  const total = getGrandTotal();
+  if (total % 41 === 0 && total > 0) {
+    setTimeout(() => alert('🎉 Tebrikler! ' + Math.floor(total/41) + '. hatim tamamlandı! Hayırlı olsun.'), 200);
+  }
+}
+
+/* TAKVİM */
+function renderCalendar() {
+  const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  document.getElementById('calTitle').textContent = months[state.calMonth] + ' ' + state.calYear;
+  const grid = document.getElementById('calGrid');
+  const days = ['Pt','Sa','Ça','Pe','Cu','Ct','Pz'];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const firstDay = new Date(state.calYear, state.calMonth, 1).getDay();
+  const offset = (firstDay === 0) ? 6 : firstDay - 1;
+  const daysInMonth = new Date(state.calYear, state.calMonth+1, 0).getDate();
+
+  let html = days.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+  for (let i = 0; i < offset; i++) html += '<div class="cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = state.calYear + '-' + String(state.calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const dayData = state.entries[key] || {};
+    const total = Object.values(dayData).reduce((a,b)=>a+b,0);
+    const isToday = (new Date(state.calYear, state.calMonth, d).getTime() === today.getTime());
+    const hasData = total > 0;
+    html += `<div class="cal-day ${isToday?'today':''} ${hasData?'has-data':''}" onclick="showDayDetail('${key}',${d})">
+      <span class="day-num">${d}</span>
+      ${hasData ? `<span class="day-count">${total}</span>` : ''}
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function showDayDetail(key, day) {
+  const dayData = state.entries[key] || {};
+  const card = document.getElementById('calDetailCard');
+  const det = document.getElementById('calDetail');
+  if (Object.keys(dayData).length === 0) { card.style.display='none'; return; }
+  const total = Object.values(dayData).reduce((a,b)=>a+b,0);
+  const months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  det.innerHTML = `<h4>${day} ${months[state.calMonth]} ${state.calYear} — Toplam: ${total} adet</h4>` +
+    Object.entries(dayData).map(([r,c]) => `<div class="cal-detail-row"><span>${r}</span><span><strong>${c}</strong> adet</span></div>`).join('');
+  card.style.display = 'block';
+}
+
+function changeMonth(dir) {
+  state.calMonth += dir;
+  if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+  if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  renderCalendar();
+  document.getElementById('calDetailCard').style.display = 'none';
+}
+
+document.getElementById('entryModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('active')) doLogin();
+  if (e.key === 'Escape') closeModal();
+});
+
+loadState();
+</script>
+</body>
+</html>
